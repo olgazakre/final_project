@@ -6,15 +6,16 @@ dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET || "default_secret";
 
-interface RequestWithUser extends Request {
+export interface RequestWithUser extends Request {
   user?: { id: string };
 }
 
-export const authenticate = (req: RequestWithUser, res: Response, next: NextFunction) => {
+export const authenticate = (req: RequestWithUser, res: Response, next: NextFunction): void => {
   const token = req.header("Authorization")?.split(" ")[1];
 
   if (!token) {
-    return res.status(401).json({ message: "Нет токена, авторизация отклонена" });
+     res.status(401).json({ message: "Нет токена, авторизация отклонена" });
+     return;
   }
 
   try {

@@ -15,6 +15,7 @@ export const registerUser = async (req: Request, res: Response):Promise<void> =>
     const existingUser = await User.findOne({ email });
     if (existingUser) {
        res.status(400).json({ message: "Email уже используется" });
+       return;
     }
 
     const newUser = new User({ username, email, password, fullName });
