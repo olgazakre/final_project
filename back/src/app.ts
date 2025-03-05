@@ -1,11 +1,14 @@
 import  express, { Application, Request, Response } from "express";
-import router from "./routes/authRoutes";
-import userRoutes from "./routes/userRoutes"
+import authRouter from "./routes/authRoutes";
+import userRoutes from "./routes/userRoutes";
+import postRoutes from "./routes/postRoutes"
 
 const app: Application = express()
 app.use(express.json())
-app.use("/user", router)
+
+app.use("/auth", authRouter)
 app.use("/users", userRoutes)
+app.use("/posts", postRoutes)
 
 
 export default app
