@@ -51,3 +51,4 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
     res.status(500).json({ message: "Ошибка обновления профиля", error: error.massage || error });
   }
 };
+

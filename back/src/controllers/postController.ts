@@ -162,4 +162,39 @@ export const updatePost = async (req: RequestWithUser, res: Response): Promise<v
       res.status(500).json({ message: "Ошибка при удалении поста" });
     }
   };
+
+  export const explorePosts = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const postCount = await Post.countDocuments();
   
+      if (postCount === 0) {
+        res.json({ message: "Нет постов для отображения" });
+        return;
+      }
+  
+      const sampleSize = postCount < 10 ? postCount : 10;
+  
+      const posts = await Post.aggregate([{ $sample: { size: sampleSize } }])
+        .lookup({
+          from: "users",
+          localField: "author",
+          foreignField: "_id",
+          as: "author",
+        })
+        .unwind({ path: "$author", preserveNullAndEmptyArrays: true })
+        .project({
+          image: 1,
+          description: 1,
+          createdAt: 1,
+          "author.username": 1,
+          "author.avatar": 1,
+          likes: 1,
+          comments: 1,
+        });
+  
+      res.json(posts);
+    } catch (error) {
+      console.error("Ошибка при получении постов:", error);
+      res.status(500).json({ message: "Ошибка при получении постов", error });
+    }
+  };
