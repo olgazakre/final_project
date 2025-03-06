@@ -10,6 +10,8 @@ export interface IUser extends Document{
     bio?: string;
     avatar?: string;
     posts?: Types.Array<Types.ObjectId>
+    likes?: Types.Array<Types.ObjectId>
+    comments?: Types.Array<Types.ObjectId>
     comparePassword(candidatePassword: string): Promise<boolean>
 }
 
@@ -21,6 +23,9 @@ const UserSchema = new Schema<IUser>({
     bio: {type: String, default: ""},
     avatar: {type: String, default: ""},
     posts: { type: [{ type: Types.ObjectId, ref: "Post" }], default: [] },
+    likes: { type: [{ type: Types.ObjectId, ref: "Like" }], default: [] },
+    comments: { type: [{ type: Types.ObjectId, ref: "Comment" }], default: [] },
+
 })
 
 UserSchema.pre("save", async function (next) {

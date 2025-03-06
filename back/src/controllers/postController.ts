@@ -151,6 +151,11 @@ export const updatePost = async (req: RequestWithUser, res: Response): Promise<v
       }
   
       await post.deleteOne();
+
+      await User.findByIdAndUpdate(req.user.id, {
+        $pull: { posts: post._id }
+      });
+      
       res.json({ message: "Пост удалён" });
   
     } catch (error) {
