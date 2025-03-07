@@ -12,16 +12,16 @@ export const addComment = async (req: RequestWithUser, res: Response): Promise<v
 
     if (!text) {
       res.status(400).json({ message: "Комментарий не может быть пустым" });
-      return 
+      return;
     }
 
     const post = await Post.findById(postId);
     if (!post) {
       res.status(404).json({ message: "Пост не найден" });
-      return 
+      return;
     }
 
-    const comment = new Comment({ user: userId, post: postId, text });
+    const comment = new Comment({ user: userId, post: postId, text, author: userId });
     await comment.save();
 
     post.comments.push(comment._id);
@@ -43,12 +43,12 @@ export const deleteComment = async (req: RequestWithUser, res: Response): Promis
     const comment = await Comment.findById(commentId);
     if (!comment) {
       res.status(404).json({ message: "Комментарий не найден" });
-      return 
+      return;
     }
 
-    if (comment.user.toString() !== userId) {
+    if (comment.user.toString() !== userId && comment.author.toString() !== userId) {
       res.status(403).json({ message: "Нет прав для удаления" });
-      return 
+      return;
     }
 
     await Post.findByIdAndUpdate(comment.post, { $pull: { comments: comment._id } });
@@ -62,13 +62,16 @@ export const deleteComment = async (req: RequestWithUser, res: Response): Promis
   }
 };
 
-export const getPostComments = async (req: Request, res: Response) => {
+export const getPostComments = async (req: Request, res: Response): Promise<void> => {
   try {
     const { postId } = req.params;
-    const comments = await Comment.find({ post: postId }).populate("user", "username avatar");
+    const comments = await Comment.find({ post: postId })
+      .populate("user", "username avatar") 
+      .populate("author", "username avatar"); 
 
     res.json(comments);
   } catch (error) {
     res.status(500).json({ message: "Ошибка при получении комментариев" });
   }
 };
+

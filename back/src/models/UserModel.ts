@@ -14,6 +14,7 @@ export interface IUser extends Document{
     comments?: Types.Array<Types.ObjectId>
     followers?: Types.Array<Types.ObjectId>;
     following?: Types.Array<Types.ObjectId>; 
+    notifications?: Types.Array<Types.ObjectId>;
     comparePassword(candidatePassword: string): Promise<boolean>
 }
 
@@ -29,6 +30,7 @@ const UserSchema = new Schema<IUser>({
     comments: { type: [{ type: Types.ObjectId, ref: "Comment" }], default: [] },
     followers: { type: [{ type: Types.ObjectId, ref: "User" }], default: [] }, 
     following: { type: [{ type: Types.ObjectId, ref: "User" }], default: [] },
+    notifications: { type: [{ type: Types.ObjectId, ref: "Notification" }], default: [] },
 })
 
 UserSchema.pre("save", async function (next) {
