@@ -15,10 +15,11 @@ const router = express.Router();
 
 router.get("/user", authenticate, getUserPosts);
 router.post("/", authenticate, upload.single("image"), processImage, createPost);
-router.get("/:id", getPostById);
 router.put("/:id", authenticate, upload.single("image"), processImage, updatePost);
 router.delete("/:id", authenticate, deletePost);
 router.get("/", getAllPosts);
 router.get("/explore", explorePosts);
+router.get("/:id([0-9a-fA-F]{24})", getPostById);
+
 
 export default router;

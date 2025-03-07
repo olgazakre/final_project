@@ -12,6 +12,8 @@ export interface IUser extends Document{
     posts?: Types.Array<Types.ObjectId>
     likes?: Types.Array<Types.ObjectId>
     comments?: Types.Array<Types.ObjectId>
+    followers?: Types.Array<Types.ObjectId>;
+    following?: Types.Array<Types.ObjectId>; 
     comparePassword(candidatePassword: string): Promise<boolean>
 }
 
@@ -25,7 +27,8 @@ const UserSchema = new Schema<IUser>({
     posts: { type: [{ type: Types.ObjectId, ref: "Post" }], default: [] },
     likes: { type: [{ type: Types.ObjectId, ref: "Like" }], default: [] },
     comments: { type: [{ type: Types.ObjectId, ref: "Comment" }], default: [] },
-
+    followers: { type: [{ type: Types.ObjectId, ref: "User" }], default: [] }, 
+    following: { type: [{ type: Types.ObjectId, ref: "User" }], default: [] },
 })
 
 UserSchema.pre("save", async function (next) {

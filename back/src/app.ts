@@ -4,7 +4,8 @@ import profileRoutes from "./routes/profileRoutes";
 import postRoutes from "./routes/postRoutes";
 import likeRoutes from "./routes/likeRoutes";
 import commentRoutes from "./routes/commentRoutes"
-import searchRoutes from "./routes/searchRoutes"
+import searchRoutes from "./routes/searchRoutes";
+import subscriptionRoutes from "./routes/subscriptionRoutes"
 
 const app: Application = express()
 app.use(express.json())
@@ -14,7 +15,8 @@ app.use("/users", profileRoutes)
 app.use("/posts", postRoutes)
 app.use("/posts", likeRoutes);
 app.use("/posts", commentRoutes);
-app.use('/search', searchRoutes)
+app.use('/search', searchRoutes);
+app.use("/subscriptions", subscriptionRoutes)
 
 
 export default app
