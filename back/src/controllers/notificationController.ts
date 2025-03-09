@@ -36,7 +36,6 @@ export const createNotification = async (
       });
   
       await notification.save();
-      console.log("Уведомление успешно создано:", notification);
 
       const updatedUser = await User.findByIdAndUpdate(
         userId,
@@ -49,7 +48,6 @@ export const createNotification = async (
         return;
       }
   
-      console.log("Уведомление добавлено пользователю:", updatedUser);
     } catch (error) {
       console.error("Ошибка при создании уведомления:", error);
     }

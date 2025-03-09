@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import Subscription from "../models/SubscriptionModel";
 import User from "../models/UserModel";
 import { RequestWithUser } from "../middlewares/authMiddleware";
+import { createNotification } from "./notificationController";
+import { Types } from "mongoose";
 
 export const getFollowers = async (req: Request, res: Response) => {
     try {
@@ -45,6 +47,8 @@ export const followUser = async (req: RequestWithUser, res: Response): Promise<v
 
         await User.findByIdAndUpdate(followerId, { $addToSet: { following: userId } });
         await User.findByIdAndUpdate(userId, { $addToSet: { followers: followerId } });
+
+        await createNotification(new Types.ObjectId(userId), new Types.ObjectId(followerId), "started following you")
 
         res.json({ message: "Подписка успешна", subscription });
     } catch (error) {

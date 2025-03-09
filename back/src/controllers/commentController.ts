@@ -3,6 +3,8 @@ import Comment from "../models/commentModel";
 import Post from "../models/PostModel";
 import User from "../models/UserModel";
 import { RequestWithUser } from "../middlewares/authMiddleware";
+import { createNotification } from "./notificationController";
+import { Types } from "mongoose";
 
 export const addComment = async (req: RequestWithUser, res: Response): Promise<void> => {
   try {
@@ -15,22 +17,35 @@ export const addComment = async (req: RequestWithUser, res: Response): Promise<v
       return;
     }
 
-    const post = await Post.findById(postId);
+    if (!Types.ObjectId.isValid(postId)) {
+      res.status(400).json({ message: "Некорректный ID поста" });
+      return;
+    }
+
+    const userObjectId = new Types.ObjectId(userId);
+    const postObjectId = new Types.ObjectId(postId);
+
+    const post = await Post.findById(postObjectId).populate("author", "_id");
     if (!post) {
       res.status(404).json({ message: "Пост не найден" });
       return;
     }
 
-    const comment = new Comment({ user: userId, post: postId, text, author: userId });
+    const comment = new Comment({ user: userObjectId, post: postObjectId, text, author: userObjectId });
     await comment.save();
 
     post.comments.push(comment._id);
     await post.save();
 
-    await User.findByIdAndUpdate(userId, { $push: { comments: comment._id } });
+    await User.findByIdAndUpdate(userObjectId, { $push: { comments: comment._id } });
+
+    if (post.author._id.toString() !== userObjectId.toString()) {
+      await createNotification(post.author._id, userObjectId, "commented on your post", postObjectId, comment._id);
+    }
 
     res.json({ message: "Комментарий добавлен", comment });
   } catch (error) {
+    console.error("Ошибка при добавлении комментария:", error);
     res.status(500).json({ message: "Ошибка при добавлении комментария" });
   }
 };
