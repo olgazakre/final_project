@@ -20,6 +20,12 @@ export const registerUser = async (req: Request, res: Response):Promise<void> =>
        return;
     }
 
+    const existingUserName = await User.findOne({ username });
+    if (existingUserName) {
+       res.status(400).json({ message: "Username уже используется" });
+       return;
+    }
+
     const newUser = new User({ username, email, password, fullName });
     await newUser.save();
 
@@ -67,7 +73,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       const token = jwt.sign({ id: user._id }, JWT_RESET_SECRET, { expiresIn: "1h" });
   
       await sendResetPasswordEmail(email, token);
-  
+      console.log("token: ", token)
       res.json({ message: "Ссылка для сброса пароля отправлена на email", token });
     } catch (error) {
       res.status(500).json({ message: "Ошибка сервера", error });
