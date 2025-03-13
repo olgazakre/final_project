@@ -1,5 +1,7 @@
 .container {
     display: flex;
+    max-width: 935px;
+    margin: 50px auto;
   }
   
   .imageContainer {
@@ -23,6 +25,11 @@
     padding: 2rem;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
+  }
+
+  .formContainer form{
+    padding: 0px;
+    box-shadow: none;
   }
   
   .logoContainer {
@@ -107,6 +114,7 @@
   .registerContainer p {
     margin: 0;
     font-size: 14px;
+    color: black;
   }
   
   @media(max-width: 770px){

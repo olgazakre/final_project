@@ -4,23 +4,35 @@ import api from "../utils/api";
 import { Link } from "react-router-dom";
 import styles from "../styles/Login.module.css";
 import loginImage from "../assets/loginImg.jpg";
-import logoImage from "../assets/ichgram.jpg"; 
+import logoImage from "../assets/ichgram.jpg";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/authSlice";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+
     try {
       const response = await api.post("/auth/login", { email, password });
-      localStorage.setItem("token", response.data.token);
-      navigate("/");
+
+      if (response.data.user) {
+        dispatch(setUser({ user: response.data.user, token: response.data.token }));
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+        localStorage.setItem("token", response.data.token);        
+        navigate("/");
+      } else {
+        setError("Ошибка при получении данных пользователя");
+      }
     } catch (err) {
-      console.error(err)
-      setError("Неверные учетные данные");
+      console.error("Ошибка входа:", err);
+      setError(err.response?.status === 401 ? "Неверный email или пароль" : "Ошибка сервера, попробуйте позже");
     }
   };
 

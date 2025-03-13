@@ -17,7 +17,18 @@
     padding: 2rem;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
+    max-height: -webkit-fill-available;
 }
+
+.formContainer{
+    padding: 15px;
+}
+
+.formContainer form{
+    padding: 0px;
+    box-shadow: none;
+    max-width: 100%;
+  }
 
 .logoContainer {
     display: flex;
@@ -25,23 +36,23 @@
 }
 
 .logo {
-    max-width: 180px;
+    width: 180px;
 }
 
 .subtitle {
     font-size: 16px;
     color: #555;
-    margin: 10px 0 20px;
+    margin: 5px 0;
     text-align: center;
 }
 
 .input {
     width: 100%;
     padding: 10px;
-    margin-top: 5px;
     border: 1px solid #ddd;
     border-radius: 3px;
     box-sizing: border-box;
+    font-size: 14px;
 }
 
 .button {
@@ -88,6 +99,7 @@
 
 .registerContainer p {
     font-size: 14px;
+    color: black;
 }
 
 .link {
@@ -107,6 +119,9 @@
     .formContainer, .registerContainer {
         max-width: 450px;
     }
+    .formContainer form{
+        gap: 5px;
+    }
 }
 
 @media (max-width: 770px) {
@@ -116,8 +131,23 @@
     .formContainer, .registerContainer {
         max-width: 80%;
     }
+    .formContainer{
+        padding: 10px;
+    }
     .logo {
-        max-width: 140px;
+        width: 100px;
+    }
+    .input{
+        font-size: 12px;
+        margin: 0;
+    }
+    .subtitle {
+        font-size: 14px;
+        margin: 5px 0 10px;
+    }
+    .infoText{
+        font-size: 10px;
+        margin-top: 5px;
     }
 }
 

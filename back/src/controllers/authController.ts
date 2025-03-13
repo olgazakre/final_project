@@ -54,7 +54,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
   
       const token = jwt.sign({ id: user._id.toString() }, JWT_SECRET, { expiresIn: "1d" });
   
-      res.status(200).json({ token, user: { id: user._id, username: user.username, email: user.email } });
+      res.status(200).json({ token, user: { id: user._id, username: user.username, email: user.email, avatar: user.avatar } });
     } catch (error) {
       res.status(500).json({ message: "Ошибка сервера", error });
     }

@@ -1,0 +1,153 @@
+.menu {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 250px;
+  height: 100vh;
+  background-color: #fff;
+  border-right: 1px solid #ddd;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.logoContainer {
+  margin-bottom: 20px;
+}
+
+.logo {
+  width: 120px;
+}
+
+.menuList {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  padding: 15px;
+  font-size: 18px;
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.menuItem.active, 
+.profileItem.active {
+  font-weight: bold !important;
+  background-color: #e0e0e0;
+}
+
+.menuItem svg {
+  margin-right: 10px;
+}
+
+.menuItem:hover {
+  background-color: #f0f0f0;
+}
+
+.menuItem.active {
+  background-color: #e0e0e0;
+  font-weight: bold;
+}
+
+.profileContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
+  border-top: 1px solid #ddd;
+}
+
+.profileItem {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  padding: 15px;
+  font-size: 18px;
+  border-radius: 10px;
+  transition: background 0.3s ease;
+  width: 100%;
+  justify-content: center;
+}
+
+.profileItem:hover {
+  background-color: #f0f0f0;
+}
+
+.profileImage {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+@media (max-width: 1024px) {
+  .menu {
+    width: 200px;
+  }
+  
+  .menuItem {
+    font-size: 16px;
+    padding: 12px;
+  }
+  
+  .logo {
+    width: 100px;
+  }
+}
+
+@media (max-width: 768px) {
+  .menu {
+    width: 70px;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .logo {
+    width: 50px;
+  }
+
+  .menuItem {
+    flex-direction: column;
+    align-items: center;
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .menuItem svg {
+    margin: 0 0 5px 0;
+  }
+
+  .menuItem span {
+    display: none;
+  }
+
+  .profileItem span {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .menu {
+    width: 60px;
+    padding: 5px;
+  }
+
+  .menuItem {
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  .logo {
+    width: 40px;
+  }
+}

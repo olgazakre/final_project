@@ -1,0 +1,10 @@
+.container {
+    display: flex;
+  }
+  
+  .content {
+    flex: 1;
+    margin-left: 250px; /* Отступ контента, равный ширине меню */
+    padding: 20px;
+  }
+  
