@@ -7,7 +7,7 @@ import { Types } from "mongoose";
 
 export const getAllPosts = async (req: Request, res: Response) => {
   try {
-    const posts = await Post.find().populate("author", "username");
+    const posts = await Post.find().populate("author", "username avatar");
     res.json(posts);
   } catch (error) {
     res.status(500).json({ message: "Ошибка при получении постов" });

@@ -7,7 +7,6 @@ import { useSelector } from "react-redux";
 
 const Menu = () => {
   const user = useSelector((state) => state.auth.user);
-  console.log("User from Redux:", user);
 
   const avatarSrc = user?.avatar
     ? user.avatar.startsWith("data:image")

@@ -1,0 +1,90 @@
+.post {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    background: white;
+    max-width: 500px;
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+
+  .imageErrorIcon {
+    width: 100px;  
+    height: 100px; 
+    color: red;   
+    display: block;
+    margin: 0 auto;
+  }  
+  
+  .info {
+    flex: 1;
+    margin-left: 10px;
+  }
+  
+  .username {
+    font-weight: bold;
+  }
+  
+  .date {
+    color: gray;
+    font-size: 12px;
+  }
+  
+  .followBtn {
+    background-color: #0095f6;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .postImage {
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
+  }
+  
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .icon {
+    cursor: pointer;
+    color: gray;
+  }
+  
+  .liked {
+    color: red;
+  }
+  
+  .likes, .comment, .viewComments {
+    margin-top: 5px;
+  }
+  
+  .viewComments {
+    color: gray;
+    cursor: pointer;
+  }
+
+  .description {
+    font-size: 14px;
+    color: #444;
+    margin-top: 5px;
+    line-height: 1.4;
+  }
+  
+  

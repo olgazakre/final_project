@@ -22,7 +22,7 @@
     width: 350px;
     background: rgba(255, 255, 255, 1);
     border: 1px solid rgba(219, 219, 219, 1);
-    padding: 2rem;
+    padding: 20px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
   }

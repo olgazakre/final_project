@@ -1,0 +1,64 @@
+/* Контейнер для всей страницы */
+.container {
+  max-width: 600px; /* Максимальная ширина контейнера */
+  margin: 0 auto; /* Центрируем контейнер */
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr; 
+  gap: 20px;
+}
+
+/* Контейнер для кнопки "Показать ещё" и сообщения */
+.loadMoreContainer {
+  display: flex;
+  flex-direction: column; /* Элементы будут располагаться вертикально */
+  align-items: center; /* Выравниваем по центру */
+  margin-top: 20px;
+  gap: 10px; /* Отступ между элементами */
+}
+
+/* Стили для кнопки "Показать ещё" */
+.loadMore {
+  display: block;
+  padding: 12px 24px;
+  background-color: #0095f6;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 16px;
+}
+
+.loadMore:hover {
+  background-color: #0077cc;
+}
+
+.noMorePosts {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* Отступ между иконкой и текстом */
+  margin-top: 20px; /* Отступ сверху */
+  font-size: 18px;
+  font-weight: bold;
+  color: #555;
+}
+
+.checkIcon {
+  width: 24px;
+  height: 24px;
+  color: green;
+}
+
+
+@media (max-width: 600px) {
+  .container {
+    padding: 10px;
+  }
+
+  .loadMore {
+    width: 100%; /* Кнопка будет растягиваться на всю ширину на мобильных устройствах */
+  }
+}
+
