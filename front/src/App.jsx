@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./redux/store";
-import Register from "./components/Register";
-import Login from "./components/Login";
-import RequestPasswordReset from "./components/RequestPasswordReset";
-import ResetPassword from "./components/ResetPassword";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
+import RequestPasswordReset from "./pages/RequestPasswordReset";
+import ResetPassword from "./pages/ResetPassword";
 import Home from "./pages/Home";
 import Layout from "./components/Layout";
 import AuthLoader from "./utils/AuthLoader";

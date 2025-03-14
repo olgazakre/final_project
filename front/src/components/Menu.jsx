@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import styles from "../styles/Menu.module.css";
 import logo from "../assets/ichgram.jpg";
 import { Home, Search, Compass, MessageCircle, Bell, PlusCircle, User } from "lucide-react";
 import { useSelector } from "react-redux";
+import SearchModal from "./SearchModal"; // Импортируем модальное окно поиска
 
 const Menu = () => {
   const user = useSelector((state) => state.auth.user);
+  const [isSearchOpen, setSearchOpen] = useState(false); // Состояние для открытия/закрытия модального окна поиска
 
   const avatarSrc = user?.avatar
     ? user.avatar.startsWith("data:image")
@@ -36,11 +38,14 @@ const Menu = () => {
           </NavLink>
         </li>
         <li>
-          <NavLink 
-            to="/search" 
-            className={({ isActive }) => 
-              isActive ? `${styles.menuItem} ${styles.active}` : styles.menuItem
-            }
+          {/* Поиск теперь вызывается через NavLink, как и другие элементы меню */}
+          <NavLink
+            to="#"
+            onClick={(e) => {
+              e.preventDefault(); // Останавливаем переход по ссылке
+              setSearchOpen(true); // Открытие модального окна поиска
+            }}
+            className={styles.menuItem}
           >
             <Search size={24} /> <span>Поиск</span>
           </NavLink>
@@ -102,8 +107,15 @@ const Menu = () => {
           <span>Профиль</span>
         </NavLink>
       </div>
+
+      {/* Модальное окно поиска */}
+      <SearchModal 
+        isOpen={isSearchOpen} 
+        onClose={() => setSearchOpen(false)} 
+      />
     </nav>
   );
 };
 
 export default Menu;
+
