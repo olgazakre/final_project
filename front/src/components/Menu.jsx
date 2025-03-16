@@ -5,11 +5,15 @@ import logo from "../assets/ichgram.jpg";
 import { Home, Search, Compass, MessageCircle, Bell, PlusCircle, User } from "lucide-react";
 import { useSelector } from "react-redux";
 import SearchModal from "./SearchModal";
+import NotificationModal from "./NotificationModal";
+
 
 const Menu = () => {
   const user = useSelector((state) => state.auth.user);
   const [isSearchOpen, setSearchOpen] = useState(false);
   const [activeItem, setActiveItem] = useState("home");
+  const [isNotificationOpen, setNotificationOpen] = useState(false);
+
 
   if (!user) {
     return <div>Загрузка...</div>; 
@@ -75,16 +79,18 @@ const Menu = () => {
           </NavLink>
         </li>
         <li>
-          <NavLink
-            to="/notifications"
-            className={({ isActive }) =>
-              `${styles.menuItem} ${activeItem === "notifications" || isActive ? styles.active : ""}`
-            }
-            onClick={() => setActiveItem("notifications")}
-          >
-            <Bell size={24} /> <span>Уведомления</span>
-          </NavLink>
-        </li>
+  <a
+    href="#"
+    onClick={(e) => {
+      e.preventDefault();
+      setNotificationOpen(true);
+      setActiveItem("notifications");
+    }}
+    className={`${styles.menuItem} ${activeItem === "notifications" ? styles.active : ""}`}
+  >
+    <Bell size={24} /> <span>Уведомления</span>
+  </a>
+</li>
         <li>
           <NavLink
             to="/create"
@@ -122,6 +128,14 @@ const Menu = () => {
           setActiveItem(""); 
         }}
       />
+
+<NotificationModal
+  isOpen={isNotificationOpen}
+  onClose={() => {
+    setNotificationOpen(false);
+    setActiveItem("");
+  }}
+/>
     </nav>
   );
 };

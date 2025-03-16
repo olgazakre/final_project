@@ -10,6 +10,7 @@ const Post = ({ post }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.user); 
+  const token = useSelector((state) => state.auth.token);
 
   const [liked, setLiked] = useState(post.likes.includes(currentUser?.id));
   const [likeCount, setLikeCount] = useState(post.likes.length);
@@ -22,7 +23,7 @@ const Post = ({ post }) => {
       try {
         if (currentUser) {
           const response = await api.get(`/subscriptions/${currentUser.id}/following`, {
-            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+            headers: { Authorization: `Bearer ${token}` },
           });
 
           // Проверяем, если среди подписок есть автор поста
@@ -40,7 +41,7 @@ const Post = ({ post }) => {
     if (currentUser) {
       checkSubscription();
     }
-  }, [currentUser, post.author._id]);
+  }, [currentUser, post.author._id, token]);
 
   const handleLike = () => {
     const newLiked = !liked;

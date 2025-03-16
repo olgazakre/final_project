@@ -4,7 +4,7 @@
   
   .content {
     flex: 1;
-    margin-left: 250px; /* Отступ контента, равный ширине меню */
+    margin-left: 250px;
     padding: 20px;
   }
   

@@ -1,47 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import api from '../utils/api'; // Импортируем api для запросов
-import styles from '../styles/Explore.module.css'; // Подключим стили для компонента
+import api from '../utils/api'; 
+import styles from '../styles/Explore.module.css'; 
 
 const Explore = () => {
-  const [randomPosts, setRandomPosts] = useState([]); // Состояние для случайных постов
-  const [loading, setLoading] = useState(true); // Состояние для отслеживания загрузки
-  const [error, setError] = useState(null); // Состояние для обработки ошибок
+  const [randomPosts, setRandomPosts] = useState([]); 
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null); 
 
-  // Функция для загрузки всех постов и выбора случайных
   const loadPosts = async () => {
-    setLoading(true); // Устанавливаем загрузку в true
+    setLoading(true); 
     try {
-      // Запрос на сервер для получения всех постов
       const response = await api.get('/posts');
-      const allPosts = response.data; // Получаем все посты
+      const allPosts = response.data; 
 
-      // Рандомно выбираем 10 постов
       const shuffledPosts = [...allPosts];
       for (let i = shuffledPosts.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [shuffledPosts[i], shuffledPosts[j]] = [shuffledPosts[j], shuffledPosts[i]]; // Перемешиваем посты
+        [shuffledPosts[i], shuffledPosts[j]] = [shuffledPosts[j], shuffledPosts[i]]; 
       }
 
-      // Оставляем только первые 10 случайных постов
       setRandomPosts(shuffledPosts.slice(0, 10));
     } catch (err) {
         console.error(err)
-      setError('Ошибка загрузки постов'); // Если ошибка, сохраняем сообщение
+      setError('Ошибка загрузки постов'); 
     } finally {
-      setLoading(false); // Завершаем загрузку
+      setLoading(false); 
     }
   };
 
   useEffect(() => {
-    loadPosts(); // Загружаем посты при монтировании компонента
+    loadPosts(); 
   }, []);
 
   if (loading) {
-    return <div>Загрузка...</div>; // Если идет загрузка
+    return <div>Загрузка...</div>; 
   }
 
   if (error) {
-    return <div>{error}</div>; // Если произошла ошибка
+    return <div>{error}</div>; 
   }
 
   return (

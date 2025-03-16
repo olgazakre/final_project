@@ -1,18 +1,17 @@
-/* Контейнер для всего компонента */
+
 .container {
     padding: 20px;
     text-align: center;
   }
   
-  /* Сетка для отображения постов */
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Равномерные колонки */
-    gap: 20px; /* Промежутки между элементами */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+    gap: 20px; 
     margin-top: 20px;
   }
   
-  /* Карточка поста */
+ 
   .card {
     background-color: white;
     border-radius: 8px;
@@ -21,14 +20,12 @@
     transition: transform 0.3s ease;
   }
   
-  /* Элемент с изображением */
   .image {
     width: 100%;
     height: 300px;
     object-fit: cover;
   }
   
-  /* Контент карточки */
   .cardContent {
     padding: 15px;
   }
@@ -45,7 +42,6 @@
     font-size: 14px;
   }
   
-  /* Эффект при наведении на карточку */
   .card:hover {
     transform: translateY(-5px);
   }

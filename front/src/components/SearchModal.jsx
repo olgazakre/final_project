@@ -1,45 +1,42 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom"; // Импортируем NavLink для перехода
+import { NavLink } from "react-router-dom"; 
 import api from "../utils/api";
 import styles from "../styles/SearchModal.module.css";
-import { X, User } from "lucide-react"; // Иконка X для очистки
+import { X, User } from "lucide-react"; 
 
 const SearchModal = ({ isOpen, onClose }) => {
-  const [query, setQuery] = useState(""); // Состояние для текстового ввода
-  const [results, setResults] = useState([]); // Состояние для хранения результатов поиска
-  const [loading, setLoading] = useState(false); // Состояние для отслеживания загрузки
+  const [query, setQuery] = useState(""); 
+  const [results, setResults] = useState([]); 
+  const [loading, setLoading] = useState(false); 
 
-  // Функция для обработки ввода текста в поле
   const handleSearch = async (e) => {
     const searchText = e.target.value;
-    setQuery(searchText); // Обновляем состояние поля ввода
+    setQuery(searchText); 
 
     if (searchText.trim() === "") {
-      setResults([]); // Если поле пустое, очищаем результаты поиска
+      setResults([]); 
       return;
     }
 
-    setLoading(true); // Начинаем загрузку данных
+    setLoading(true); 
 
     try {
       const response = await api.get(`/search/users?query=${searchText}`);
-      setResults(response.data); // Заполняем результаты поиска
+      setResults(response.data); 
     } catch (error) {
       console.error("Ошибка поиска пользователей:", error);
     } finally {
-      setLoading(false); // Завершаем загрузку
+      setLoading(false); 
     }
   };
 
-  // Функция для очистки поля ввода
   const handleClear = () => {
-    setQuery(""); // Очищаем поле ввода
-    setResults([]); // Очищаем результаты поиска
+    setQuery(""); 
+    setResults([]);
   };
 
-  // Закрытие модального окна при переходе по ссылке
   const handleLinkClick = () => {
-    onClose(); // Закрытие модального окна при переходе на профиль
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -62,27 +59,26 @@ const SearchModal = ({ isOpen, onClose }) => {
           />
           {query && (
             <button onClick={handleClear} className={styles.clearButton}>
-              <X size={16} /> {/* Иконка крестика */}
+              <X size={16} /> 
             </button>
           )}
         </div>
 
         <div className={styles.results}>
           {loading ? (
-            <p>Загрузка...</p> // Показываем "Загрузка...", если идет запрос
+            <p>Загрузка...</p> 
           ) : results.length > 0 ? (
             results.map((user) => (
               <NavLink 
                 key={user._id} 
                 to={`/profile/${user._id}`} 
                 className={styles.user}
-                onClick={handleLinkClick} // Закрытие модального окна при переходе на профиль
+                onClick={handleLinkClick} 
               >
-                {/* Проверка на наличие аватара, если его нет - показываем иконку */}
                 {user.avatar ? (
                   <img src={user.avatar} alt="Avatar" className={styles.avatar} />
                 ) : (
-                  <User className={styles.avatarIcon} /> // Показываем иконку User, если аватар отсутствует
+                  <User className={styles.avatarIcon} /> 
                 )}
                 <p>{user.username}</p>
               </NavLink>

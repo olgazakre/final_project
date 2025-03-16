@@ -1,0 +1,117 @@
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modalContent {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+  
+  .closeButton {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: transparentg;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    max-width: 30px;
+    max-height: 30px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    padding: 3px;
+  }
+  
+  .notificationList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .notificationItem {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #eaeaea;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .notificationItem:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 12px;
+  }
+  
+  .notificationInfo {
+    flex: 1;
+  }
+  
+  .notificationInfo p {
+    margin: 0;
+    font-size: 14px;
+  }
+  
+  .timestamp {
+    font-size: 12px;
+    color: gray;
+    margin-top: 4px;
+  }
+
+  .typetamp{
+    font-size: 12px;
+    color: black;
+  }
+  
+  .postImage {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-left: 12px;
+    border-radius: 6px;
+  }
+  
+  .loading {
+    text-align: center;
+    margin: 20px 0;
+    color: #666;
+  }
+  
+  .markAllButton {
+    margin-top: 15px;
+    padding: 10px 15px;
+    background-color: #3897f0;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .markAllButton:hover {
+    background-color: #2a7de1;
+  }
+  
