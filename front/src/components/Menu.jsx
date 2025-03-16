@@ -4,21 +4,22 @@ import styles from "../styles/Menu.module.css";
 import logo from "../assets/ichgram.jpg";
 import { Home, Search, Compass, MessageCircle, Bell, PlusCircle, User } from "lucide-react";
 import { useSelector } from "react-redux";
-import SearchModal from "./SearchModal"; // Импортируем модальное окно поиска
+import SearchModal from "./SearchModal";
 
 const Menu = () => {
   const user = useSelector((state) => state.auth.user);
-  const [isSearchOpen, setSearchOpen] = useState(false); // Состояние для открытия/закрытия модального окна поиска
+  const [isSearchOpen, setSearchOpen] = useState(false);
+  const [activeItem, setActiveItem] = useState("home");
+
+  if (!user) {
+    return <div>Загрузка...</div>; 
+  }
 
   const avatarSrc = user?.avatar
     ? user.avatar.startsWith("data:image")
       ? user.avatar
       : `data:image/jpeg;base64,${user.avatar}`
     : null;
-
-  if (!user) {
-    return <div>Загрузка...</div>;
-  }
 
   return (
     <nav className={styles.menu}>
@@ -28,64 +29,69 @@ const Menu = () => {
 
       <ul className={styles.menuList}>
         <li>
-          <NavLink 
-            to="/" 
-            className={({ isActive }) => 
-              isActive ? `${styles.menuItem} ${styles.active}` : styles.menuItem
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `${styles.menuItem} ${activeItem === "home" || isActive ? styles.active : ""}`
             }
+            onClick={() => setActiveItem("home")}
           >
             <Home size={24} /> <span>Дом</span>
           </NavLink>
         </li>
         <li>
-          {/* Поиск теперь вызывается через NavLink, как и другие элементы меню */}
-          <NavLink
-            to="#"
+          <a
+            href="#"
             onClick={(e) => {
-              e.preventDefault(); // Останавливаем переход по ссылке
-              setSearchOpen(true); // Открытие модального окна поиска
+              e.preventDefault(); 
+              setSearchOpen(true);
+              setActiveItem("search"); 
             }}
-            className={styles.menuItem}
+            className={`${styles.menuItem} ${activeItem === "search" ? styles.active : ""}`}
           >
             <Search size={24} /> <span>Поиск</span>
-          </NavLink>
+          </a>
         </li>
         <li>
-          <NavLink 
-            to="/explore" 
-            className={({ isActive }) => 
-              isActive ? `${styles.menuItem} ${styles.active}` : styles.menuItem
+          <NavLink
+            to="/explore"
+            className={({ isActive }) =>
+              `${styles.menuItem} ${activeItem === "explore" || isActive ? styles.active : ""}`
             }
+            onClick={() => setActiveItem("explore")}
           >
             <Compass size={24} /> <span>Интересное</span>
           </NavLink>
         </li>
         <li>
-          <NavLink 
-            to="/messages" 
-            className={({ isActive }) => 
-              isActive ? `${styles.menuItem} ${styles.active}` : styles.menuItem
+          <NavLink
+            to="/messages"
+            className={({ isActive }) =>
+              `${styles.menuItem} ${activeItem === "messages" || isActive ? styles.active : ""}`
             }
+            onClick={() => setActiveItem("messages")}
           >
             <MessageCircle size={24} /> <span>Сообщения</span>
           </NavLink>
         </li>
         <li>
-          <NavLink 
-            to="/notifications" 
-            className={({ isActive }) => 
-              isActive ? `${styles.menuItem} ${styles.active}` : styles.menuItem
+          <NavLink
+            to="/notifications"
+            className={({ isActive }) =>
+              `${styles.menuItem} ${activeItem === "notifications" || isActive ? styles.active : ""}`
             }
+            onClick={() => setActiveItem("notifications")}
           >
             <Bell size={24} /> <span>Уведомления</span>
           </NavLink>
         </li>
         <li>
-          <NavLink 
-            to="/create" 
-            className={({ isActive }) => 
-              isActive ? `${styles.menuItem} ${styles.active}` : styles.menuItem
+          <NavLink
+            to="/create"
+            className={({ isActive }) =>
+              `${styles.menuItem} ${activeItem === "create" || isActive ? styles.active : ""}`
             }
+            onClick={() => setActiveItem("create")}
           >
             <PlusCircle size={24} /> <span>Создать</span>
           </NavLink>
@@ -93,11 +99,12 @@ const Menu = () => {
       </ul>
 
       <div className={styles.profileContainer}>
-        <NavLink 
-          to="/profile" 
-          className={({ isActive }) => 
-            isActive ? `${styles.profileItem} ${styles.active}` : styles.profileItem
+        <NavLink
+          to={`/profile/${user.id}`} 
+          className={({ isActive }) =>
+            `${styles.profileItem} ${activeItem === "profile" || isActive ? styles.active : ""}`
           }
+          onClick={() => setActiveItem("profile")} 
         >
           {avatarSrc ? (
             <img src={avatarSrc} alt="Аватар" className={styles.profileImage} />
@@ -108,14 +115,15 @@ const Menu = () => {
         </NavLink>
       </div>
 
-      {/* Модальное окно поиска */}
-      <SearchModal 
-        isOpen={isSearchOpen} 
-        onClose={() => setSearchOpen(false)} 
+      <SearchModal
+        isOpen={isSearchOpen}
+        onClose={() => {
+          setSearchOpen(false);
+          setActiveItem(""); 
+        }}
       />
     </nav>
   );
 };
 
 export default Menu;
-

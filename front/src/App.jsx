@@ -8,6 +8,9 @@ import ResetPassword from "./pages/ResetPassword";
 import Home from "./pages/Home";
 import Layout from "./components/Layout";
 import AuthLoader from "./utils/AuthLoader";
+import Profile from "./pages/Profile";
+import Explore from "./pages/Explore";
+import Messages from "./pages/Messages";
 
 function App() {
   return (
@@ -21,6 +24,9 @@ function App() {
           <Route path="/auth/reset-password/:token" element={<ResetPassword />} />
           <Route path="/*" element={<Layout />}>
             <Route path="" element={<Home />} />
+            <Route path="profile/:userId" element={<Profile />} />
+            <Route path="explore" element={<Explore />} />
+            <Route path="messages" element={<Messages />} />
           </Route>
         </Routes>
       </Router>

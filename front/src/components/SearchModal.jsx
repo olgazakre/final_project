@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { NavLink } from "react-router-dom"; // Импортируем NavLink для перехода
 import api from "../utils/api";
 import styles from "../styles/SearchModal.module.css";
 import { X, User } from "lucide-react"; // Иконка X для очистки
@@ -36,6 +37,11 @@ const SearchModal = ({ isOpen, onClose }) => {
     setResults([]); // Очищаем результаты поиска
   };
 
+  // Закрытие модального окна при переходе по ссылке
+  const handleLinkClick = () => {
+    onClose(); // Закрытие модального окна при переходе на профиль
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -54,7 +60,6 @@ const SearchModal = ({ isOpen, onClose }) => {
             onChange={handleSearch}
             className={styles.input}
           />
-          {/* Кнопка очистки в виде крестика, отображается, когда есть текст в поле */}
           {query && (
             <button onClick={handleClear} className={styles.clearButton}>
               <X size={16} /> {/* Иконка крестика */}
@@ -67,7 +72,12 @@ const SearchModal = ({ isOpen, onClose }) => {
             <p>Загрузка...</p> // Показываем "Загрузка...", если идет запрос
           ) : results.length > 0 ? (
             results.map((user) => (
-              <div key={user._id} className={styles.user}>
+              <NavLink 
+                key={user._id} 
+                to={`/profile/${user._id}`} 
+                className={styles.user}
+                onClick={handleLinkClick} // Закрытие модального окна при переходе на профиль
+              >
                 {/* Проверка на наличие аватара, если его нет - показываем иконку */}
                 {user.avatar ? (
                   <img src={user.avatar} alt="Avatar" className={styles.avatar} />
@@ -75,7 +85,7 @@ const SearchModal = ({ isOpen, onClose }) => {
                   <User className={styles.avatarIcon} /> // Показываем иконку User, если аватар отсутствует
                 )}
                 <p>{user.username}</p>
-              </div>
+              </NavLink>
             ))
           ) : (
             <p className={styles.noResults}>Пользователи не найдены</p>
