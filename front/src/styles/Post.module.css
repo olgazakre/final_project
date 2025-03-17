@@ -87,4 +87,31 @@
     line-height: 1.4;
   }
   
+.icon, .liked {
+  cursor: pointer;
+  color: gray;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.icon:hover, .liked:hover {
+  color: red; 
+  transform: scale(1.1); 
+}
+
+.icon:hover {
+  color: #00aaff; 
+  transform: scale(1.1); 
+}
+
+.liked {
+  color: red; 
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+
   

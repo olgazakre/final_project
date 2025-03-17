@@ -18,23 +18,43 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+  
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Введите корректный email");
+      return;
+    }
 
+    if (password.length < 4) {
+      setError("Пароль должен содержать минимум 4 символа");
+      return;
+    }
+  
     try {
       const response = await api.post("/auth/login", { email, password });
-
+    
       if (response.data.user) {
         dispatch(setUser({ user: response.data.user, token: response.data.token }));
         localStorage.setItem("user", JSON.stringify(response.data.user));
-        localStorage.setItem("token", response.data.token);        
+        localStorage.setItem("token", response.data.token);
         navigate("/");
       } else {
         setError("Ошибка при получении данных пользователя");
       }
     } catch (err) {
       console.error("Ошибка входа:", err);
-      setError(err.response?.status === 401 ? "Неверный email или пароль" : "Ошибка сервера, попробуйте позже");
+    
+      if (err.response) {
+        if (err.response.status === 400) {
+          setError("Неверный email или пароль");
+        } else {
+          setError("Ошибка сервера, попробуйте позже");
+        }
+      } else {
+        setError("Не удалось подключиться к серверу");
+      }
     }
-  };
+  }    
 
   return (
     <div className={styles.container}>

@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import styles from '../styles/NotificationModal.module.css';
 import api from "../utils/api";
 import { useSelector } from 'react-redux'; // Для получения токена
-import { useDispatch } from 'react-redux'; // Для dispatch действий
-import { data } from 'react-router-dom';
 
 const NotificationModal = ({ isOpen, onClose }) => {
   const [notifications, setNotifications] = useState([]);
@@ -11,7 +9,6 @@ const NotificationModal = ({ isOpen, onClose }) => {
   const [error, setError] = useState(null); // Добавляем состояние для ошибок
   const user = useSelector((state) => state.auth.user); // Получаем пользователя и токен
   const posts = useSelector((state) => state.posts.posts); // Получаем все посты из Redux
-  const dispatch = useDispatch(); // Для dispatch действий
 
   useEffect(() => {
     if (isOpen) {

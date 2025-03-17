@@ -6,17 +6,17 @@ import { Home, Search, Compass, MessageCircle, Bell, PlusCircle, User } from "lu
 import { useSelector } from "react-redux";
 import SearchModal from "./SearchModal";
 import NotificationModal from "./NotificationModal";
-
+import CreatePostModal from "./CreatePostModal";
 
 const Menu = () => {
   const user = useSelector((state) => state.auth.user);
   const [isSearchOpen, setSearchOpen] = useState(false);
   const [activeItem, setActiveItem] = useState("home");
   const [isNotificationOpen, setNotificationOpen] = useState(false);
-
+  const [isCreatePostOpen, setCreatePostOpen] = useState(false); 
 
   if (!user) {
-    return <div>Загрузка...</div>; 
+    return <div>Загрузка...</div>;
   }
 
   const avatarSrc = user?.avatar
@@ -24,6 +24,10 @@ const Menu = () => {
       ? user.avatar
       : `data:image/jpeg;base64,${user.avatar}`
     : null;
+
+  const handlePostSubmit = (postData) => {
+    console.log("Новый пост:", postData);
+  };
 
   return (
     <nav className={styles.menu}>
@@ -47,9 +51,9 @@ const Menu = () => {
           <a
             href="#"
             onClick={(e) => {
-              e.preventDefault(); 
+              e.preventDefault();
               setSearchOpen(true);
-              setActiveItem("search"); 
+              setActiveItem("search");
             }}
             className={`${styles.menuItem} ${activeItem === "search" ? styles.active : ""}`}
           >
@@ -79,38 +83,40 @@ const Menu = () => {
           </NavLink>
         </li>
         <li>
-  <a
-    href="#"
-    onClick={(e) => {
-      e.preventDefault();
-      setNotificationOpen(true);
-      setActiveItem("notifications");
-    }}
-    className={`${styles.menuItem} ${activeItem === "notifications" ? styles.active : ""}`}
-  >
-    <Bell size={24} /> <span>Уведомления</span>
-  </a>
-</li>
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              setNotificationOpen(true);
+              setActiveItem("notifications");
+            }}
+            className={`${styles.menuItem} ${activeItem === "notifications" ? styles.active : ""}`}
+          >
+            <Bell size={24} /> <span>Уведомления</span>
+          </a>
+        </li>
         <li>
-          <NavLink
-            to="/create"
-            className={({ isActive }) =>
-              `${styles.menuItem} ${activeItem === "create" || isActive ? styles.active : ""}`
-            }
-            onClick={() => setActiveItem("create")}
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              setCreatePostOpen(true);
+              setActiveItem("create");
+            }}
+            className={`${styles.menuItem} ${activeItem === "create" ? styles.active : ""}`}
           >
             <PlusCircle size={24} /> <span>Создать</span>
-          </NavLink>
+          </a>
         </li>
       </ul>
 
       <div className={styles.profileContainer}>
         <NavLink
-          to={`/profile/${user.id}`} 
+          to={`/profile/${user.id}`}
           className={({ isActive }) =>
             `${styles.profileItem} ${activeItem === "profile" || isActive ? styles.active : ""}`
           }
-          onClick={() => setActiveItem("profile")} 
+          onClick={() => setActiveItem("profile")}
         >
           {avatarSrc ? (
             <img src={avatarSrc} alt="Аватар" className={styles.profileImage} />
@@ -125,17 +131,26 @@ const Menu = () => {
         isOpen={isSearchOpen}
         onClose={() => {
           setSearchOpen(false);
-          setActiveItem(""); 
+          setActiveItem("");
         }}
       />
 
-<NotificationModal
-  isOpen={isNotificationOpen}
-  onClose={() => {
-    setNotificationOpen(false);
-    setActiveItem("");
-  }}
-/>
+      <NotificationModal
+        isOpen={isNotificationOpen}
+        onClose={() => {
+          setNotificationOpen(false);
+          setActiveItem("");
+        }}
+      />
+
+      <CreatePostModal
+        isOpen={isCreatePostOpen}
+        onClose={() => {
+          setCreatePostOpen(false);
+          setActiveItem("");
+        }}
+        onPostSubmit={handlePostSubmit}
+      />
     </nav>
   );
 };

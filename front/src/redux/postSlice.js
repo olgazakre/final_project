@@ -11,20 +11,8 @@ const postSlice = createSlice({
     setPosts(state, action) {
       state.posts = action.payload;
     },
-    likePost(state, action) {
-      const { postId, userId, liked } = action.payload;
-      const post = state.posts.find((post) => post.id === postId);
-
-      if (post) {
-        if (liked) {
-          post.likes.push(userId); 
-        } else {
-          post.likes = post.likes.filter((id) => id !== userId); 
-        }
-      }
-    },
   },
 });
 
-export const { setPosts, likePost } = postSlice.actions;
+export const { setPosts } = postSlice.actions;
 export default postSlice.reducer;

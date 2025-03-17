@@ -8,7 +8,7 @@ export const searchUsers = async (req: Request, res: Response): Promise<void> =>
       res.status(400).json({ message: "Запрос не может быть пустым" });
       return
     }
-
+ 
     const users = await User.find({
       $or: [
         { username: { $regex: query, $options: "i" } },
