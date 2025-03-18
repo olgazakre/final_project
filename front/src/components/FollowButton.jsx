@@ -3,7 +3,7 @@ import api from "../utils/api";
 import { useSelector } from "react-redux";
 import styles from "../styles/FollowButton.module.css";
 
-const FollowButton = ({ targetUserId, authorId }) => {
+const FollowButton = ({ targetUserId }) => {
   const currentUser = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.token);
 
@@ -62,7 +62,7 @@ const FollowButton = ({ targetUserId, authorId }) => {
     }
   };
 
-  if (!currentUser || currentUser.id === authorId) return null;
+  if (!currentUser || currentUser.id === targetUserId) return null;
 
   return (
     <button
@@ -76,3 +76,4 @@ const FollowButton = ({ targetUserId, authorId }) => {
 };
 
 export default FollowButton;
+   

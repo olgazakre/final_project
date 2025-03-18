@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Heart, MessageCircle, User } from "lucide-react";
+import { Link } from "react-router-dom"; 
 import FollowButton from "./FollowButton";
 import useLike from "../hooks/useLike";
 import useComments from "../hooks/useComments";
@@ -41,21 +42,27 @@ const Post = ({ post }) => {
     <div className={styles.post}>
       <div className={styles.header}>
         {avatarSrc ? (
-          <img src={avatarSrc} alt="Avatar" className={styles.avatar} />
+          <Link to={`/profile/${post.author._id}`}> 
+            <img src={avatarSrc} alt="Avatar" className={styles.avatar} />
+          </Link>
         ) : (
-          <User className={styles.avatarIcon} />
+          <Link to={`/profile/${post.author._id}`}> 
+            <User className={styles.avatarIcon} />
+          </Link>
         )}
+        
         <div className={styles.info}>
-          <p className={styles.username}>
-            {post.author?.username || "Неизвестный пользователь"}
-          </p>
+          <Link to={`/profile/${post.author._id}`}>
+            <p className={styles.username}>
+              {post.author?.username || "Неизвестный пользователь"}
+            </p>
+          </Link>
           <p className={styles.date}>
             {new Date(post.createdAt).toLocaleDateString()}
           </p>
         </div>
         <FollowButton
           targetUserId={post.author._id}
-          authorId={post.author._id}
         />
       </div>
 
@@ -108,3 +115,4 @@ const Post = ({ post }) => {
 };
 
 export default Post;
+

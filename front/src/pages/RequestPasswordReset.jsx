@@ -45,18 +45,15 @@ const RequestPasswordReset = () => {
 
         {message && <div className={styles.message}>{message}</div>}
 
-        {/* Черта с "ИЛИ" */}
         <div className={styles.separator}>
           <span className={styles.orText}>ИЛИ</span>
         </div>
 
-        {/* Ссылка на регистрацию */}
         <Link to="/auth/register" className={styles.link}>
           Создать новый аккаунт
         </Link>
       </div>
 
-      {/* Ссылка на возвращение к логину */}
       <div className={styles.loginContainer}>
         <Link to="/auth/login" className={styles.backToLogin}>
           Вернуться к входу

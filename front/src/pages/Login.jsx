@@ -35,8 +35,8 @@ const Login = () => {
     
       if (response.data.user) {
         dispatch(setUser({ user: response.data.user, token: response.data.token }));
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-        localStorage.setItem("token", response.data.token);
+        // localStorage.setItem("user", JSON.stringify(response.data.user));
+        // localStorage.setItem("token", response.data.token);
         navigate("/");
       } else {
         setError("Ошибка при получении данных пользователя");

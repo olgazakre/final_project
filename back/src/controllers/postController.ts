@@ -14,31 +14,27 @@ export const getAllPosts = async (req: Request, res: Response) => {
   }
 };
 
-export const getUserPosts = async (req: RequestWithUser, res: Response): Promise<void> => {
-    if (!req.user?.id) {
-      res.status(401).json({ message: "Неавторизованный пользователь" });
+export const getUserPosts = async (req: Request, res: Response): Promise<void> => {
+  const { userId } = req.params; // Получаем userId из параметра запроса
+
+  try {
+    const user = await User.findById(userId).populate("posts");
+    if (!user) {
+      res.status(404).json({ message: "Пользователь не найден" });
       return;
     }
-  
-    try {
-      const user = await User.findById(req.user.id).populate("posts");
-      if (!user) {
-        res.status(404).json({ message: "Пользователь не найден" });
-        return;
-      }
-  
-      if (!user.posts) {
-        res.status(404).json({ message: "Посты не найдены" });
-        return;
-      }
-  
-      res.json(user.posts); 
-    } catch (error) {
-      res.status(500).json({ message: "Ошибка при получении постов" });
-    }
-  };
-  
 
+    if (!user.posts || user.posts.length === 0) {
+      res.status(404).json({ message: "Посты не найдены" });
+      return;
+    }
+
+    res.json(user.posts);
+  } catch (error) {
+    console.error("Ошибка при получении постов:", error);
+    res.status(500).json({ message: "Ошибка при получении постов" });
+  }
+};
 
   export const createPost = async (req: RequestWithUser, res: Response): Promise<void> => {
     if (!req.user?.id) {

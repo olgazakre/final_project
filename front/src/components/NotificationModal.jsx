@@ -1,25 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../styles/NotificationModal.module.css';
 import api from "../utils/api";
-import { useSelector } from 'react-redux'; // Для получения токена
+import { useSelector } from 'react-redux';
 
 const NotificationModal = ({ isOpen, onClose }) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null); // Добавляем состояние для ошибок
-  const user = useSelector((state) => state.auth.user); // Получаем пользователя и токен
-  const posts = useSelector((state) => state.posts.posts); // Получаем все посты из Redux
+  const [error, setError] = useState(null);
+
+  const token = useSelector((state) => state.auth.token);
+  const posts = useSelector((state) => state.posts.posts);
 
   useEffect(() => {
     if (isOpen) {
       const fetchNotifications = async () => {
         setLoading(true);
-        setError(null); // Сбрасываем ошибку перед новым запросом
+        setError(null);
         try {
-          const token = user?.token || localStorage.getItem("token"); // Используем токен из Redux или localStorage
-          
           if (!token) {
-            console.error('Токен отсутствует');
+            console.error('Token отсутствует');
             setError('Пожалуйста, авторизируйтесь');
             return;
           }
@@ -28,12 +27,21 @@ const NotificationModal = ({ isOpen, onClose }) => {
             headers: { Authorization: `Bearer ${token}` },
           });
 
-          const data = response.data; // axios сам парсит данные
-          console.log(data)
-          setNotifications(data);
+          console.log('Уведомления:', response.data);
+          setNotifications(response.data);
         } catch (error) {
           console.error('Ошибка при получении уведомлений:', error);
-          setError('Ошибка при получении уведомлений');
+
+          if (error.response) {
+            console.error('Ответ сервера:', error.response.data);
+            setError(error.response.data.message || 'Ошибка при получении уведомлений');
+          } else if (error.request) {
+            console.error('Нет ответа от сервера:', error.request);
+            setError('Нет ответа от сервера');
+          } else {
+            console.error('Ошибка:', error.message);
+            setError(error.message);
+          }
         } finally {
           setLoading(false);
         }
@@ -41,15 +49,12 @@ const NotificationModal = ({ isOpen, onClose }) => {
 
       fetchNotifications();
     }
-  }, [isOpen, user]);
+  }, [isOpen, token]);
 
-  // Отметить все уведомления как прочитанные
   const handleMarkAllAsRead = async () => {
     try {
-      const token = user?.token || localStorage.getItem("token");
-
       if (!token) {
-        console.error('Токен отсутствует');
+        console.error('Token отсутствует');
         setError('Пожалуйста, авторизируйтесь');
         return;
       }
@@ -58,21 +63,28 @@ const NotificationModal = ({ isOpen, onClose }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      // После успешного запроса, очищаем уведомления
       setNotifications([]);
     } catch (error) {
       console.error('Ошибка при отметке всех уведомлений как прочитанных:', error);
-      setError('Ошибка при отметке всех уведомлений как прочитанных');
+
+      if (error.response) {
+        console.error('Ответ сервера:', error.response.data);
+        setError(error.response.data.message || 'Ошибка при отметке уведомлений');
+      } else if (error.request) {
+        console.error('Нет ответа от сервера:', error.request);
+        setError('Нет ответа от сервера');
+      } else {
+        console.error('Ошибка:', error.message);
+        setError(error.message);
+      }
     }
   };
 
-  // Получаем пост по id
   const getPostById = (postId) => {
-    return posts.find(post => post._id === postId); // Поиск поста по id
+    return posts.find(post => post._id === postId);
   };
 
   if (!isOpen) return null;
-
 
   return (
     <div className={styles.modalOverlay}>
@@ -86,19 +98,18 @@ const NotificationModal = ({ isOpen, onClose }) => {
           <p className={styles.loading}>Загрузка уведомлений...</p>
         ) : (
           <>
-            {error && <p className={styles.error}>{error}</p>} {/* Отображаем сообщение об ошибке */}
+            {error && <p className={styles.error}>{error}</p>}
             <ul className={styles.notificationList}>
               {notifications.length === 0 ? (
                 <p>Нет новых уведомлений</p>
               ) : (
                 notifications.map((notification) => {
-                  const post = getPostById(notification.postId); // Получаем пост из состояния по его id
+                  const post = getPostById(notification.postId);
 
                   return (
                     <li key={notification._id} className={styles.notificationItem}>
-                      {/* Изображение пользователя (если есть в формате base64) */}
                       <img
-                        src={notification.sender.avatar} // Используем base64 строку
+                        src={notification.sender.avatar}
                         alt={notification.sender.username}
                         className={styles.avatar}
                       />
@@ -114,10 +125,9 @@ const NotificationModal = ({ isOpen, onClose }) => {
                         </p>
                       </div>
 
-                      {/* Изображение поста (если есть в формате base64) */}
                       {post && post.image && (
                         <img
-                          src={post.image} // Используем base64 строку для изображения поста
+                          src={post.image}
                           alt="Изображение поста"
                           className={styles.postImage}
                         />

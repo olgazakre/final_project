@@ -2,11 +2,10 @@ import React from "react";
 import Modal from "react-modal";
 import styles from "../styles/CommentModal.module.css";
 
-// Чтобы модалка работала корректно
 Modal.setAppElement("#root");
 
 const CommentModal = ({
-  comments = [], // Сразу по умолчанию массив
+  comments = [],
   showModal,
   setShowModal,
   setNewComment,

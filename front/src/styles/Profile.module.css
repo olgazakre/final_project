@@ -1,0 +1,118 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+  
+  .topBlock {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+  
+  .avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .userInfo {
+    flex: 1;
+  }
+  
+  .usernameBlock {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .username {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .editProfileButton, .messageButton {
+    padding: 8px 16px;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .editProfileButton {
+    background-color: #4b5563;
+  }
+  
+  .statsBlock {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+  
+  .bio {
+    color: #374151;
+  }
+  
+  .postsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .postImage {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  .loadMoreBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .loadMoreButton {
+    padding: 10px 20px;
+    background-color: #111827;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .noMorePosts {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #6b7280;
+    margin-top: 16px;
+  }
+  
+  .noPostsText {
+    color: #6b7280;
+    margin-top: 16px;
+  }
+  
+  .loaderContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .loaderIcon {
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  

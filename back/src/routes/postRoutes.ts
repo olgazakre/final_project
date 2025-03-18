@@ -13,7 +13,7 @@ import { upload, processImage } from "../middlewares/uploadImage";
 
 const router = express.Router();
 
-router.get("/user", authenticate, getUserPosts);
+router.get("/user/:userId", getUserPosts);
 router.post("/", authenticate, upload.single("image"), processImage, createPost);
 router.put("/:id", authenticate, upload.single("image"), processImage, updatePost);
 router.delete("/:id", authenticate, deletePost);
