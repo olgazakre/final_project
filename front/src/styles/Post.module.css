@@ -1,92 +1,104 @@
+
 .post {
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 20px;
-    background: white;
-    max-width: 500px;
-  }
-  
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  .avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-  }
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+  background: white;
+  max-width: 500px;
+  width: 100%; 
+  box-sizing: border-box;
+}
 
-  .imageErrorIcon {
-    width: 100px;  
-    height: 100px; 
-    color: red;   
-    display: block;
-    margin: 0 auto;
-  }  
-  
-  .info {
-    flex: 1;
-    margin-left: 10px;
-  }
-  
-  .username {
-    font-weight: bold;
-  }
-  
-  .date {
-    color: gray;
-    font-size: 12px;
-  }
-  
-  .followBtn {
-    background-color: #0095f6;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .postImage {
-    width: 100%;
-    border-radius: 10px;
-    margin-top: 10px;
-  }
-  
-  .actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-  }
-  
-  .icon {
-    cursor: pointer;
-    color: gray;
-  }
-  
-  .liked {
-    color: red;
-  }
-  
-  .likes, .comment, .viewComments {
-    margin-top: 5px;
-  }
-  
-  .viewComments {
-    color: gray;
-    cursor: pointer;
-  }
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
 
-  .description {
-    font-size: 14px;
-    color: #444;
-    margin-top: 5px;
-    line-height: 1.4;
-  }
-  
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.imageErrorIcon {
+  width: 100px;
+  height: 100px;
+  color: red;
+  display: block;
+  margin: 0 auto;
+}
+
+.info {
+  flex: 1;
+  margin-left: 10px;
+}
+
+.info a {
+  text-decoration: none;
+}
+
+.username {
+  font-weight: bold;
+  font-size: 26px;
+  font-family: auto;
+  color: black;
+}
+
+.date {
+  color: gray;
+  font-size: 12px;
+}
+
+.postImage {
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 10px;
+  object-fit: cover; 
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.icon {
+  cursor: pointer;
+  color: gray;
+}
+
+.liked {
+  color: red;
+}
+
+.likes, .comment, .viewComments {
+  margin-top: 5px;
+  text-align: left;
+}
+.likes{
+  color: #322e2e;
+}
+
+.comment, .viewComments{
+  color: #444;
+}
+
+.viewComments {
+  color: gray;
+  cursor: pointer;
+}
+
+.description {
+  font-size: 14px;
+  color: #444;
+  margin-top: 5px;
+  line-height: 1.4;
+  word-wrap: break-word; 
+}
+
 .icon, .liked {
   cursor: pointer;
   color: gray;
@@ -94,17 +106,17 @@
 }
 
 .icon:hover, .liked:hover {
-  color: red; 
-  transform: scale(1.1); 
+  color: red;
+  transform: scale(1.1);
 }
 
 .icon:hover {
-  color: #00aaff; 
-  transform: scale(1.1); 
+  color: #00aaff;
+  transform: scale(1.1);
 }
 
 .liked {
-  color: red; 
+  color: red;
 }
 
 .actions {
@@ -114,4 +126,73 @@
 }
 
 
-  
+@media (max-width: 768px) {
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .username {
+    font-size: 20px;
+  }
+
+  .avatar {
+    width: 35px;
+    height: 35px;
+  }
+
+  .description {
+    font-size: 12px;
+  }
+
+  .followBtn {
+    padding: 4px 8px;
+  }
+
+  .postImage {
+    height: 200px;
+    object-fit: cover;
+  }
+
+  .actions {
+    gap: 8px;
+  }
+
+  .likes,
+  .viewComments {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .username {
+    font-size: 18px;
+  }
+
+  .date {
+    font-size: 10px;
+  }
+
+  .postImage {
+    height: 150px; 
+  }
+
+  .description {
+    font-size: 12px;
+  }
+
+  .followBtn {
+    font-size: 12px;
+    padding: 3px 6px;
+  }
+
+  .icon, .liked {
+    font-size: 20px;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 6px;
+  }
+}
