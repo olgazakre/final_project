@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Heart, MessageCircle, User } from "lucide-react";
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 import FollowButton from "./FollowButton";
 import useLike from "../hooks/useLike";
 import useComments from "../hooks/useComments";
@@ -13,24 +13,19 @@ const Post = ({ post }) => {
   const currentUser = useSelector((state) => state.auth.user);
   const [showModal, setShowModal] = useState(false);
   const [showPostModal, setShowPostModal] = useState(false);
-  const { liked, likeCount, handleLike } = useLike(post);
+  const [postData, setPostData] = useState(post);
+  const { liked, likeCount, handleLike } = useLike(postData);
+
   const openPostModal = () => setShowPostModal(true);
-const closePostModal = () => setShowPostModal(false);
-  const {
-    comments,
-    setNewComment,
-    newComment,
-    addComment,
-    deleteComment,
-    loading,
-    error,
-  } = useComments(post._id);
+  const closePostModal = () => setShowPostModal(false);
+
+  const { comments, setNewComment, newComment, addComment, deleteComment, loading, error } = useComments(postData._id);
 
   const isValidBase64 = (str) =>
     /^data:image\/(png|jpeg|jpg|gif|bmp|webp);base64,/.test(str);
 
-  const avatarSrc = isValidBase64(post.author?.avatar)
-    ? post.author.avatar
+  const avatarSrc = isValidBase64(postData.author?.avatar)
+    ? postData.author.avatar
     : null;
 
   const lastComment = comments.length > 0 ? comments[0] : null;
@@ -41,44 +36,64 @@ const closePostModal = () => setShowPostModal(false);
       : lastComment?.text || "";
 
   useEffect(() => {
-    console.log("Комментарии в компоненте Post:", comments);
+    setPostData((prevPost) => ({
+      ...prevPost,
+      comments: comments,
+    }));
   }, [comments]);
+
+  useEffect(() => {
+    setPostData(post); 
+  }, [post]);
+
+  const updateCommentsInParent = (newComment) => {
+    setPostData((prevPost) => ({
+      ...prevPost,
+      comments: [...prevPost.comments, newComment], 
+    }));
+  };
+
+  const handleCommentUpdate = async () => {
+    try {
+      await addComment();
+      updateCommentsInParent(newComment);
+    } catch (error) {
+      console.error("Ошибка при добавлении комментария:", error);
+    }
+  };
 
   return (
     <div className={styles.post}>
       <div className={styles.header}>
         {avatarSrc ? (
-          <Link to={`/profile/${post.author._id}`}> 
+          <Link to={`/profile/${postData.author._id}`}>
             <img src={avatarSrc} alt="Avatar" className={styles.avatar} />
           </Link>
         ) : (
-          <Link to={`/profile/${post.author._id}`}> 
+          <Link to={`/profile/${postData.author._id}`}>
             <User className={styles.avatarIcon} />
           </Link>
         )}
-        
+
         <div className={styles.info}>
-          <Link to={`/profile/${post.author._id}`}>
+          <Link to={`/profile/${postData.author._id}`}>
             <p className={styles.username}>
-              {post.author?.username || "Неизвестный пользователь"}
+              {postData.author?.username || "Неизвестный пользователь"}
             </p>
           </Link>
           <p className={styles.date}>
-            {new Date(post.createdAt).toLocaleDateString()}
+            {new Date(postData.createdAt).toLocaleDateString()}
           </p>
         </div>
-        <FollowButton
-          targetUserId={post.author._id}
-        />
+        <FollowButton targetUserId={postData.author._id} />
       </div>
 
       <img
-  src={post.image}
-  alt="Post"
-  className={styles.postImage}
-  onClick={openPostModal}
-/>
-
+        src={postData.image}
+        alt="Post"
+        className={styles.postImage}
+        onClick={openPostModal}
+      />
 
       <div className={styles.actions}>
         <Heart
@@ -93,12 +108,14 @@ const closePostModal = () => setShowPostModal(false);
 
       <p className={styles.likes}>{likeCount} лайков</p>
 
-      {post.description && (
-        <p className={styles.description}>{post.description}</p>
+      {postData.description && (
+        <p className={styles.description}>{postData.description}</p>
       )}
 
       {lastComment && lastComment.text && (
-        <p className={styles.comment}>{lastComment.author.username}: {truncatedComment}</p>
+        <p className={styles.comment}>
+          {lastComment.user.username}: {truncatedComment}
+        </p>
       )}
 
       {comments.length > 1 && (
@@ -113,25 +130,35 @@ const closePostModal = () => setShowPostModal(false);
       {error && <p className={styles.error}>{error}</p>}
 
       <CommentModal
-  showModal={showModal}
-  setShowModal={setShowModal}
-  comments={comments}
-  setNewComment={setNewComment}
-  newComment={newComment}
-  addComment={addComment}
-  deleteComment={deleteComment}
-  loading={loading}
-  currentUser={currentUser}     
-  postAuthorId={post.author._id} 
-/>
+        showModal={showModal}
+        setShowModal={setShowModal}
+        comments={comments}
+        setNewComment={setNewComment}
+        newComment={newComment}
+        addComment={handleCommentUpdate} 
+        deleteComment={deleteComment}
+        loading={loading}
+        currentUser={currentUser}
+        onCommentAdded={updateCommentsInParent} 
+      />
 
-
-{showPostModal && (
-  <PostModal postId={post._id} onClose={closePostModal}/>
-)}
+      {showPostModal && (
+        <PostModal
+        postId={postData._id}
+        onClose={closePostModal}
+        setPostData={setPostData}
+        comments={comments}
+        newComment={newComment}
+        setNewComment={setNewComment}
+        addComment={addComment}
+        deleteComment={deleteComment}
+        loading={loading}
+        error={error}
+      />
+      
+      )}
     </div>
   );
 };
 
 export default Post;
-

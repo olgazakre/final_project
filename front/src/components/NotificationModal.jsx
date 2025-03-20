@@ -27,7 +27,6 @@ const NotificationModal = ({ isOpen, onClose }) => {
             headers: { Authorization: `Bearer ${token}` },
           }); 
 
-          console.log('Уведомления:', response.data);
           setNotifications(response.data);
         } catch (error) {
           console.error('Ошибка при получении уведомлений:', error);

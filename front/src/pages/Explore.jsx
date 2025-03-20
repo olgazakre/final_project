@@ -22,7 +22,7 @@ const Explore = () => {
         [shuffledPosts[i], shuffledPosts[j]] = [shuffledPosts[j], shuffledPosts[i]]; 
       }
 
-      setRandomPosts(shuffledPosts.slice(0, 10));
+      setRandomPosts(shuffledPosts.slice(0, 9));
     } catch (err) {
         console.error(err)
       setError('Ошибка загрузки постов'); 

@@ -25,13 +25,18 @@ export const addComment = async (req: RequestWithUser, res: Response): Promise<v
     const userObjectId = new Types.ObjectId(userId);
     const postObjectId = new Types.ObjectId(postId);
 
-    const post = await Post.findById(postObjectId).populate("author", "_id");
+    const post = await Post.findById(postObjectId).populate("author", "_id username avatar");
     if (!post) {
       res.status(404).json({ message: "Пост не найден" });
       return;
     }
 
-    const comment = new Comment({ user: userObjectId, post: postObjectId, text, author: userObjectId });
+    const comment = new Comment({
+      user: userObjectId,      
+      post: postObjectId,
+      text,
+      author: post.author._id, 
+    });
     await comment.save();
 
     post.comments.push(comment._id);
@@ -43,12 +48,15 @@ export const addComment = async (req: RequestWithUser, res: Response): Promise<v
       await createNotification(post.author._id, userObjectId, "commented on your post", postObjectId, comment._id);
     }
 
+    await comment.populate("user", "username avatar");
+
     res.json({ message: "Комментарий добавлен", comment });
   } catch (error) {
     console.error("Ошибка при добавлении комментария:", error);
     res.status(500).json({ message: "Ошибка при добавлении комментария" });
   }
 };
+
 
 export const deleteComment = async (req: RequestWithUser, res: Response): Promise<void> => {
   try {

@@ -3,24 +3,33 @@ import { useSelector } from "react-redux";
 import { X, Heart, MessageCircle, MoreHorizontal, Clipboard, Edit2, Trash2 } from "lucide-react";
 import FollowButton from "./FollowButton";
 import styles from "../styles/PostModal.module.css";
-import useComments from "../hooks/useComments";
 import api from "../utils/api";
 
-const PostModal = ({ postId, onClose }) => {
+const PostModal = ({   
+  postId, 
+  onClose, 
+  setPostData, 
+  comments, 
+  newComment, 
+  setNewComment, 
+  addComment, 
+  deleteComment, 
+  loading, 
+  error  }) => {
   const currentUser = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.token);
 
   const [post, setPost] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false); 
+  const [isEditing, setIsEditing] = useState(false);
   const menuRef = useRef();
 
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
-  const [newDescription, setNewDescription] = useState(""); 
-  const [newImage, setNewImage] = useState(null); 
+  const [newDescription, setNewDescription] = useState("");
+  const [newImage, setNewImage] = useState(null);
+  const [commentSubmitting, setCommentSubmitting] = useState(false);
 
-  const { comments, setNewComment, newComment, addComment, deleteComment, loading, error } = useComments(postId);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -30,7 +39,7 @@ const PostModal = ({ postId, onClose }) => {
         setLikeCount(response.data.likes.length);
         const isLiked = response.data.likes.includes(currentUser._id);
         setLiked(isLiked);
-        setNewDescription(response.data.description); 
+        setNewDescription(response.data.description);
       } catch (error) {
         console.error("Ошибка загрузки поста:", error);
       }
@@ -40,10 +49,7 @@ const PostModal = ({ postId, onClose }) => {
 
   const handleLike = async () => {
     try {
-      await api.post(`/liked/posts/${postId}/like`,
-        { userId: currentUser._id },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.post(`/liked/posts/${postId}/like`, { userId: currentUser._id }, { headers: { Authorization: `Bearer ${token}` } });
       setLiked((prev) => !prev);
       setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
     } catch (error) {
@@ -68,13 +74,13 @@ const PostModal = ({ postId, onClose }) => {
   };
 
   const handleEditPost = () => {
-    setIsEditing(true); 
-    setMenuOpen(false); 
+    setIsEditing(true);
+    setMenuOpen(false);
   };
 
   const handleCancelEdit = () => {
-    setIsEditing(false); 
-    setNewDescription(post.description); 
+    setIsEditing(false);
+    setNewDescription(post.description);
     setNewImage(null);
   };
 
@@ -92,20 +98,43 @@ const PostModal = ({ postId, onClose }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      setIsEditing(false); 
+      setIsEditing(false);
       alert("Пост успешно отредактирован");
-      setPost((prevPost) => ({
-        ...prevPost,
-        description: newDescription,
-        image: newImage ? URL.createObjectURL(newImage) : prevPost.image,
-      }));
+
+      setPost((prevPost) => {
+        const updatedPost = {
+          ...prevPost,
+          description: newDescription,
+          image: newImage ? URL.createObjectURL(newImage) : prevPost.image,
+        };
+
+        setPostData(updatedPost);
+
+        return updatedPost;
+      });
     } catch (error) {
       console.error("Ошибка при редактировании поста:", error);
       alert("Ошибка при редактировании поста");
     }
   };
 
-  if (!post) return null;
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    setCommentSubmitting(true);
+    await addComment(); 
+    setCommentSubmitting(false);
+
+    setPostData((prevPost) => ({
+      ...prevPost,
+      comments: [...prevPost.comments, newComment], 
+    }));
+
+    onClose(); 
+  };
+
+  if (!post) return null; 
+
+  const author = post.author || {};
 
   return (
     <div className={styles.modalOverlay}>
@@ -116,10 +145,14 @@ const PostModal = ({ postId, onClose }) => {
         </div>
         <div className={styles.rightSection}>
           <div className={styles.authorBlock}>
-            <img src={post.author.avatar} alt="Avatar" className={styles.avatar} />
-            <span className={styles.username}>{post.author.username}</span>
+            {author && author.avatar ? (
+              <img src={author.avatar} alt="Avatar" className={styles.avatar} />
+            ) : (
+              <div className={styles.avatarPlaceholder}>Нет изображения</div>
+            )}
+            <span className={styles.username}>{author.username || "Неизвестный пользователь"}</span>
 
-            {currentUser.id === post.author._id ? (
+            {currentUser.id === author._id ? (
               <div className={styles.menuWrapper} ref={menuRef}>
                 <button className={styles.menuButton} onClick={() => setMenuOpen(!menuOpen)}>
                   <MoreHorizontal />
@@ -134,7 +167,7 @@ const PostModal = ({ postId, onClose }) => {
                 )}
               </div>
             ) : (
-              <FollowButton targetUserId={post.author._id} />
+              <FollowButton targetUserId={author._id} />
             )}
           </div>
 
@@ -164,53 +197,59 @@ const PostModal = ({ postId, onClose }) => {
               <p className={styles.description}>{post.description}</p>
               <span className={styles.date}>{new Date(post.createdAt).toLocaleDateString()}</span>
 
-              {!isEditing && (
-                <div className={styles.statsBlock}>
-                  <span onClick={handleLike} className={styles.iconWrapper}>
-                    <Heart
-                      fill={liked ? "red" : "none"}
-                      color={liked ? "red" : "black"}
-                    /> {likeCount}
-                  </span>
+              <div className={styles.statsBlock}>
+                <span onClick={handleLike} className={styles.iconWrapper}>
+                  <Heart
+                    fill={liked ? "red" : "none"}
+                    color={liked ? "red" : "black"}
+                  /> {likeCount}
+                </span>
 
-                  <span className={styles.iconWrapper}>
-                    <MessageCircle color="black" /> {comments.length}
-                  </span>
-                </div>
-              )}
+                <span className={styles.iconWrapper}>
+                  <MessageCircle color="black" /> {comments.length}
+                </span>
+              </div>
 
-              {!isEditing && (
-                <div className={styles.commentsSection}>
-                  {loading ? (
-                    <div>Загрузка комментариев...</div>
-                  ) : error ? (
-                    <div>{error}</div>
-                  ) : (
-                    comments.map((comment) => (
+              <div className={styles.commentsSection}>
+                {loading ? (
+                  <div>Загрузка комментариев...</div>
+                ) : error ? (
+                  <div>{error}</div>
+                ) : (
+                  comments.map((comment) => {
+                    const commentAuthor = comment.user || {};
+                    return (
                       <div key={comment._id} className={styles.comment}>
-                        <img src={comment.author.avatar} alt="Avatar" className={styles.commentAvatar} />
+                        {commentAuthor.avatar ? (
+                          <img src={commentAuthor.avatar} alt="Avatar" className={styles.commentAvatar} />
+                        ) : (
+                          <div className={styles.commentAvatarPlaceholder}>Нет изображения</div>
+                        )}
                         <div className={styles.commentContent}>
-                          <span className={styles.commentUsername}>{comment.author.username}</span>
+                          <span className={styles.commentUsername}>{commentAuthor.username || "Неизвестный пользователь"}</span>
                           <p>{comment.text}</p>
                         </div>
-                        {currentUser._id === comment.author._id && (
+                        {comment.user && currentUser._id === comment.user._id && (
                           <button onClick={() => deleteComment(comment._id)} className={styles.deleteCommentButton}>Удалить</button>
                         )}
                       </div>
-                    ))
-                  )}
-                </div>
-              )}
+                    );
+                  })
+                )}
+              </div>
 
-              <form onSubmit={(e) => { e.preventDefault(); addComment(); }} className={styles.commentForm}>
+              <form onSubmit={handleCommentSubmit} className={styles.commentForm}>
                 <input
                   type="text"
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                   placeholder="Добавьте комментарий..."
                   className={styles.commentInput}
+                  disabled={commentSubmitting}
                 />
-                <button type="submit" className={styles.submitButton}>Поделиться</button>
+                <button type="submit" className={styles.submitButton} disabled={commentSubmitting}>
+                  {commentSubmitting ? "Отправка..." : "Поделиться"}
+                </button>
               </form>
             </>
           )}

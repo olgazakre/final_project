@@ -13,13 +13,18 @@ const CommentModal = ({
   addComment,
   deleteComment,
   loading,
-  currentUser,        
-  postAuthorId,       
+  currentUser,
 }) => {
   const handleAddComment = async () => {
-    await addComment();
-    setShowModal(false);
+    try {
+      await addComment(); 
+      setShowModal(false);
+    } catch (error) {
+      console.error("Ошибка при добавлении комментария:", error);
+    }
   };
+
+  const reversedComments = [...comments].reverse();
 
   return (
     <Modal
@@ -32,29 +37,25 @@ const CommentModal = ({
         <h2>Комментарии</h2>
 
         <div className={styles.commentsContainer}>
-          {Array.isArray(comments) && comments.length > 0 ? (
-            comments
-              .slice()
-              .reverse()
-              .map((comment) => {
-                const isCommentAuthor = comment.author?._id === currentUser?.id;
-                const isPostAuthor = postAuthorId === currentUser?.id;
+          {reversedComments.length > 0 ? (
+            reversedComments.map((comment) => {
+              const isCommentAuthor = comment.user?._id === currentUser?.id;
 
-                return (
-                  <div key={comment._id} className={styles.comment}>
-                    <strong>{comment.author?.username}:</strong> {comment.text}
+              return (
+                <div key={comment._id || `${comment.text}-${Math.random()}`} className={styles.comment}>
+                  <strong>{comment.user?.username}:</strong> {comment.text}
 
-                    {(isCommentAuthor || isPostAuthor) && ( 
-                      <button
-                        onClick={() => deleteComment(comment._id)}
-                        className={styles.deleteButton}
-                      >
-                        Удалить
-                      </button>
-                    )}
-                  </div>
-                );
-              })
+                  {isCommentAuthor && (
+                    <button
+                      onClick={() => deleteComment(comment._id)}
+                      className={styles.deleteButton}
+                    >
+                      Удалить
+                    </button>
+                  )}
+                </div>
+              );
+            })
           ) : (
             <p>Комментариев пока нет.</p>
           )}
