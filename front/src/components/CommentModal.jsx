@@ -13,11 +13,11 @@ const CommentModal = ({
   addComment,
   deleteComment,
   loading,
+  currentUser,        
+  postAuthorId,       
 }) => {
   const handleAddComment = async () => {
-    // Добавление комментария
-    await addComment(); // Подождем, пока комментарий добавится
-    // Закрываем модальное окно после успешного добавления
+    await addComment();
     setShowModal(false);
   };
 
@@ -36,17 +36,25 @@ const CommentModal = ({
             comments
               .slice()
               .reverse()
-              .map((comment) => (
-                <div key={comment._id} className={styles.comment}>
-                  <strong>{comment.author?.username}:</strong> {comment.text}
-                  <button
-                    onClick={() => deleteComment(comment._id)}
-                    className={styles.deleteButton}
-                  >
-                    Удалить
-                  </button>
-                </div>
-              ))
+              .map((comment) => {
+                const isCommentAuthor = comment.author?._id === currentUser?.id;
+                const isPostAuthor = postAuthorId === currentUser?.id;
+
+                return (
+                  <div key={comment._id} className={styles.comment}>
+                    <strong>{comment.author?.username}:</strong> {comment.text}
+
+                    {(isCommentAuthor || isPostAuthor) && ( 
+                      <button
+                        onClick={() => deleteComment(comment._id)}
+                        className={styles.deleteButton}
+                      >
+                        Удалить
+                      </button>
+                    )}
+                  </div>
+                );
+              })
           ) : (
             <p>Комментариев пока нет.</p>
           )}

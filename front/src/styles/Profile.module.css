@@ -109,10 +109,22 @@
   .loaderIcon {
     animation: spin 1s linear infinite;
   }
-  
-  @keyframes spin {
-    100% {
-      transform: rotate(360deg);
-    }
+
+  .logoutButton {
+    background-color: #ff4d4d;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
   }
+  
+  .logoutButton:hover {
+    background-color: #e60000;
+  }
+  
+  
+ 
   

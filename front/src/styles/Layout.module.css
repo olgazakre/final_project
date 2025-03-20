@@ -1,7 +1,7 @@
 .container {
   display: flex;
-  flex-direction: column; /* Меняем направление! */
-  min-height: 100vh; /* Чтобы футер всегда внизу */
+  flex-direction: column; 
+  min-height: 100vh;
 }
 
 .content {
@@ -13,5 +13,5 @@
   flex: 1;
   margin-left: 250px;
   padding: 20px;
-  padding-bottom: 60px; /* отступ под футер */
+  padding-bottom: 60px; 
 }

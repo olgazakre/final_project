@@ -110,8 +110,6 @@
     cursor: not-allowed;
   }
   
-  /* ======== Адаптив ======== */
-  
   @media (max-width: 600px) {
     .container {
       padding: 20px;

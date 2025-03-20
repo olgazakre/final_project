@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 
-// Инициализация с данными из localStorage и Cookies
 const storedUser = localStorage.getItem("user");
 const storedToken = Cookies.get("token");
 
@@ -16,11 +15,10 @@ const authSlice = createSlice({
   reducers: {
     setUser: (state, action) => {
       console.log("User data set in Redux:", action.payload);
-      // Сохраняем в localStorage и Cookies
+      
       localStorage.setItem("user", JSON.stringify(action.payload.user));
       Cookies.set("token", action.payload.token, { expires: 7 });
 
-      // Обновляем состояние Redux
       state.user = action.payload.user;
       state.token = action.payload.token;
     },

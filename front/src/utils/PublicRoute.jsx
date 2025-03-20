@@ -6,7 +6,6 @@ const PublicRoute = ({ children }) => {
   const token = useSelector((state) => state.auth.token);
 
   if (token) {
-    // Если уже авторизован — отправляем на Home
     return <Navigate to="/" replace />;
   }
 

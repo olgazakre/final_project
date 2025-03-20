@@ -1,37 +1,49 @@
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom"; 
+import React, { useState, useRef } from "react";
+import { NavLink } from "react-router-dom";
 import api from "../utils/api";
 import styles from "../styles/SearchModal.module.css";
-import { X, User } from "lucide-react"; 
+import { X, User } from "lucide-react";
 
 const SearchModal = ({ isOpen, onClose }) => {
-  const [query, setQuery] = useState(""); 
-  const [results, setResults] = useState([]); 
-  const [loading, setLoading] = useState(false); 
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const controllerRef = useRef(null); 
 
   const handleSearch = async (e) => {
     const searchText = e.target.value;
-    setQuery(searchText); 
+    setQuery(searchText);
 
     if (searchText.trim() === "") {
-      setResults([]); 
+      setResults([]);
       return;
     }
 
-    setLoading(true); 
+    if (controllerRef.current) {
+      controllerRef.current.abort();
+    }
+
+    const controller = new AbortController();
+    controllerRef.current = controller;
+
+    setLoading(true);
 
     try {
-      const response = await api.get(`/search/users?query=${searchText}`);
-      setResults(response.data); 
+      const response = await api.get(`/search/users?query=${searchText}`, {
+        signal: controller.signal, 
+      });
+      setResults(response.data);
     } catch (error) {
-      console.error("Ошибка поиска пользователей:", error);
+      if (error.name !== "CanceledError" && error.name !== "AbortError") {
+        console.error("Ошибка поиска пользователей:", error);
+      }
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
   const handleClear = () => {
-    setQuery(""); 
+    setQuery("");
     setResults([]);
   };
 
@@ -48,7 +60,7 @@ const SearchModal = ({ isOpen, onClose }) => {
           <h2>Поиск</h2>
           <X className={styles.closeIcon} onClick={onClose} />
         </div>
-        
+
         <div className={styles.inputContainer}>
           <input
             type="text"
@@ -59,32 +71,32 @@ const SearchModal = ({ isOpen, onClose }) => {
           />
           {query && (
             <button onClick={handleClear} className={styles.clearButton}>
-              <X size={16} /> 
+              <X size={16} />
             </button>
           )}
         </div>
 
         <div className={styles.results}>
           {loading ? (
-            <p>Загрузка...</p> 
+            <p>Загрузка...</p>
           ) : results.length > 0 ? (
             results.map((user) => (
-              <NavLink 
-                key={user._id} 
-                to={`/profile/${user._id}`} 
+              <NavLink
+                key={user._id}
+                to={`/profile/${user._id}`}
                 className={styles.user}
-                onClick={handleLinkClick} 
+                onClick={handleLinkClick}
               >
                 {user.avatar ? (
                   <img src={user.avatar} alt="Avatar" className={styles.avatar} />
                 ) : (
-                  <User className={styles.avatarIcon} /> 
+                  <User className={styles.avatarIcon} />
                 )}
                 <p>{user.username}</p>
               </NavLink>
             ))
           ) : (
-            <p className={styles.noResults}>Пользователи не найдены</p>
+            query && <p className={styles.noResults}>Пользователи не найдены</p>
           )}
         </div>
       </div>

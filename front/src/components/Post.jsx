@@ -7,8 +7,10 @@ import useComments from "../hooks/useComments";
 import CommentModal from "./CommentModal";
 import styles from "../styles/Post.module.css";
 import PostModal from "./PostModal";
+import { useSelector } from "react-redux";
 
 const Post = ({ post }) => {
+  const currentUser = useSelector((state) => state.auth.user);
   const [showModal, setShowModal] = useState(false);
   const [showPostModal, setShowPostModal] = useState(false);
   const { liked, likeCount, handleLike } = useLike(post);
@@ -111,15 +113,18 @@ const closePostModal = () => setShowPostModal(false);
       {error && <p className={styles.error}>{error}</p>}
 
       <CommentModal
-        comments={comments}
-        showModal={showModal}
-        setShowModal={setShowModal}
-        setNewComment={setNewComment}
-        newComment={newComment}
-        addComment={addComment}
-        deleteComment={deleteComment}
-        loading={loading}
-      />
+  showModal={showModal}
+  setShowModal={setShowModal}
+  comments={comments}
+  setNewComment={setNewComment}
+  newComment={newComment}
+  addComment={addComment}
+  deleteComment={deleteComment}
+  loading={loading}
+  currentUser={currentUser}     
+  postAuthorId={post.author._id} 
+/>
+
 
 {showPostModal && (
   <PostModal postId={post._id} onClose={closePostModal}/>

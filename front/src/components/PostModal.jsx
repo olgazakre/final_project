@@ -12,13 +12,13 @@ const PostModal = ({ postId, onClose }) => {
 
   const [post, setPost] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false); // состояние для редактирования
+  const [isEditing, setIsEditing] = useState(false); 
   const menuRef = useRef();
 
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
-  const [newDescription, setNewDescription] = useState(""); // новое описание
-  const [newImage, setNewImage] = useState(null); // новое изображение
+  const [newDescription, setNewDescription] = useState(""); 
+  const [newImage, setNewImage] = useState(null); 
 
   const { comments, setNewComment, newComment, addComment, deleteComment, loading, error } = useComments(postId);
 
@@ -30,7 +30,7 @@ const PostModal = ({ postId, onClose }) => {
         setLikeCount(response.data.likes.length);
         const isLiked = response.data.likes.includes(currentUser._id);
         setLiked(isLiked);
-        setNewDescription(response.data.description); // Загружаем описание в состояние
+        setNewDescription(response.data.description); 
       } catch (error) {
         console.error("Ошибка загрузки поста:", error);
       }
@@ -68,14 +68,14 @@ const PostModal = ({ postId, onClose }) => {
   };
 
   const handleEditPost = () => {
-    setIsEditing(true); // включаем режим редактирования
-    setMenuOpen(false); // закрываем меню
+    setIsEditing(true); 
+    setMenuOpen(false); 
   };
 
   const handleCancelEdit = () => {
-    setIsEditing(false); // выключаем режим редактирования
-    setNewDescription(post.description); // сбрасываем описание
-    setNewImage(null); // сбрасываем новое изображение
+    setIsEditing(false); 
+    setNewDescription(post.description); 
+    setNewImage(null);
   };
 
   const handleSaveEdit = async () => {
@@ -92,9 +92,8 @@ const PostModal = ({ postId, onClose }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      setIsEditing(false); // Выходим из режима редактирования
+      setIsEditing(false); 
       alert("Пост успешно отредактирован");
-      // Обновляем пост с новыми данными
       setPost((prevPost) => ({
         ...prevPost,
         description: newDescription,

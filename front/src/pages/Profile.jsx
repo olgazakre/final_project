@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../utils/api";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import FollowButton from "../components/FollowButton";
 import { Loader2, ImageOff } from "lucide-react";
 import styles from "../styles/Profile.module.css";
 import PostModal from "../components/PostModal";
+import { logout } from "../redux/authSlice"; 
 
 const POSTS_PER_PAGE = 6;
 
 const Profile = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch(); 
   const currentUser = useSelector((state) => state.auth.user);
 
   const [user, setUser] = useState(null);
@@ -22,7 +24,6 @@ const Profile = () => {
   const [loadingPosts, setLoadingPosts] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState(null);
 
-  // Загружаем данные пользователя
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -38,14 +39,12 @@ const Profile = () => {
     fetchUser();
   }, [userId]);
 
-  // Сброс постов и страницы при смене пользователя
   useEffect(() => {
     setPosts([]);
     setPage(1);
     setHasMorePosts(true);
   }, [userId]);
 
-  // Загружаем посты пользователя
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -69,7 +68,6 @@ const Profile = () => {
       }
     };
 
-    // Загружаем посты только если userId уже загружен
     if (userId) {
       fetchPosts();
     }
@@ -77,6 +75,11 @@ const Profile = () => {
 
   const handleLoadMore = () => {
     setPage((prev) => prev + 1);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout()); 
+    navigate("/auth/login"); 
   };
 
   if (loadingUser || !user) {
@@ -99,20 +102,25 @@ const Profile = () => {
           <div className={styles.usernameBlock}>
             <h2 className={styles.username}>{user.username}</h2>
             {currentUser && currentUser.id === user._id ? (
-              <button
-                onClick={() => navigate(`/edit-profile`)}
-                className={styles.editProfileButton}
-              >
-                Редактировать профиль
-              </button>
+              <>
+                <button
+                  onClick={() => navigate(`/edit-profile`)}
+                  className={styles.editProfileButton}
+                >
+                  Редактировать профиль
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className={styles.logoutButton}
+                >
+                  Выйти
+                </button>
+              </>
             ) : (
               <>
-               {currentUser && currentUser.id !== user._id && (
-  <FollowButton 
-    targetUserId={user._id} 
-  />
-)}
-
+                {currentUser && currentUser.id !== user._id && (
+                  <FollowButton targetUserId={user._id} />
+                )}
                 <button
                   onClick={() => navigate(`/messages/${user._id}`)}
                   className={styles.messageButton}
@@ -132,16 +140,16 @@ const Profile = () => {
       </div>
 
       <div className={styles.postsGrid}>
-  {posts.map((post) => (
-    <img
-      key={post._id}
-      src={post.image}
-      alt="Post"
-      className={styles.postImage}
-      onClick={() => setSelectedPostId(post._id)} // Открываем модалку
-    />
-  ))}
-</div>
+        {posts.map((post) => (
+          <img
+            key={post._id}
+            src={post.image}
+            alt="Post"
+            className={styles.postImage}
+            onClick={() => setSelectedPostId(post._id)} 
+          />
+        ))}
+      </div>
 
       <div className={styles.loadMoreBlock}>
         {loadingPosts && <Loader2 className={styles.loaderIcon} />}
@@ -163,9 +171,10 @@ const Profile = () => {
           <div className={styles.noPostsText}>У пользователя пока нет постов</div>
         )}
       </div>
+
       {selectedPostId && (
-  <PostModal postId={selectedPostId} onClose={() => setSelectedPostId(null)} />
-)}
+        <PostModal postId={selectedPostId} onClose={() => setSelectedPostId(null)} />
+      )}
     </div>
   );
 };

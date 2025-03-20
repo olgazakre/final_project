@@ -25,7 +25,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
 
           const response = await api.get('/notification', {
             headers: { Authorization: `Bearer ${token}` },
-          });
+          }); 
 
           console.log('Уведомления:', response.data);
           setNotifications(response.data);
@@ -125,9 +125,9 @@ const NotificationModal = ({ isOpen, onClose }) => {
                         </p>
                       </div>
 
-                      {post && post.image && (
+                      {notification.post && notification.post.image && (
                         <img
-                          src={post.image}
+                          src={notification.post.image}
                           alt="Изображение поста"
                           className={styles.postImage}
                         />

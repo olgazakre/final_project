@@ -208,7 +208,6 @@
     cursor: pointer;
   }
 
-  /* --- Адаптив для планшетов и телефонов --- */
 @media (max-width: 768px) {
     .modalContent {
       flex-direction: column;

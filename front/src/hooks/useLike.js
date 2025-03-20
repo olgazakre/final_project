@@ -12,7 +12,6 @@ const useLike = (post) => {
   useEffect(() => {
     if (!post || !post.likes || !currentUser || !currentUser.likes) return;
 
-    // Проверяем есть ли лайк этого поста в списке лайков пользователя
     const isLiked = currentUser.likes.some(userLikeId =>
       post.likes.includes(userLikeId)
     );
