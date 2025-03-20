@@ -21,7 +21,7 @@ export const getProfile = async (req: Request , res: Response): Promise<void> =>
 
 export const updateProfile = async (req: RequestWithUser, res: Response): Promise<void> => {
   try {
-    const { fullName, bio, avatar } = req.body;
+    const { username, bio, avatar } = req.body;
     const userId = req.user?.id; 
 
     if(!userId){
@@ -36,7 +36,7 @@ export const updateProfile = async (req: RequestWithUser, res: Response): Promis
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { fullName, bio, avatar },
+      { username, bio, avatar },
       { new: true, select: "-password" } 
     );
 

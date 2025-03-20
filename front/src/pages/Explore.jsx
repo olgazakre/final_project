@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import api from '../utils/api'; 
 import styles from '../styles/Explore.module.css'; 
+import PostModal from '../components/PostModal';
+
 
 const Explore = () => {
   const [randomPosts, setRandomPosts] = useState([]); 
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null); 
+  const [selectedPostId, setSelectedPostId] = useState(null);
 
   const loadPosts = async () => {
     setLoading(true); 
@@ -32,6 +35,14 @@ const Explore = () => {
     loadPosts(); 
   }, []);
 
+  const openPostModal = (postId) => {
+    setSelectedPostId(postId);
+  };
+  
+  const closePostModal = () => {
+    setSelectedPostId(null);
+  }; 
+  
   if (loading) {
     return <div>Загрузка...</div>; 
   }
@@ -45,7 +56,13 @@ const Explore = () => {
       <div className={styles.grid}>
         {randomPosts.map((post) => (
           <div key={post._id} className={styles.card}>
-            <img src={post.image} alt={post.title} className={styles.image} />
+            <img
+  src={post.image}
+  alt={post.title}
+  className={styles.image}
+  onClick={() => openPostModal(post._id)}
+/>
+
             <div className={styles.cardContent}>
               <h3>{post.title}</h3>
               <p>{post.description}</p>
@@ -53,6 +70,11 @@ const Explore = () => {
           </div>
         ))}
       </div>
+
+      {selectedPostId && (
+  <PostModal postId={selectedPostId} onClose={closePostModal} />
+)}
+
     </div>
   );
 };

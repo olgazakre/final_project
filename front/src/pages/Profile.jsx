@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import FollowButton from "../components/FollowButton";
 import { Loader2, ImageOff } from "lucide-react";
 import styles from "../styles/Profile.module.css";
+import PostModal from "../components/PostModal";
 
 const POSTS_PER_PAGE = 6;
 
@@ -19,6 +20,7 @@ const Profile = () => {
   const [hasMorePosts, setHasMorePosts] = useState(true);
   const [loadingUser, setLoadingUser] = useState(false);
   const [loadingPosts, setLoadingPosts] = useState(false);
+  const [selectedPostId, setSelectedPostId] = useState(null);
 
   // Загружаем данные пользователя
   useEffect(() => {
@@ -130,15 +132,16 @@ const Profile = () => {
       </div>
 
       <div className={styles.postsGrid}>
-        {posts.map((post) => (
-          <img
-            key={post._id}
-            src={post.image}
-            alt="Post"
-            className={styles.postImage}
-          />
-        ))}
-      </div>
+  {posts.map((post) => (
+    <img
+      key={post._id}
+      src={post.image}
+      alt="Post"
+      className={styles.postImage}
+      onClick={() => setSelectedPostId(post._id)} // Открываем модалку
+    />
+  ))}
+</div>
 
       <div className={styles.loadMoreBlock}>
         {loadingPosts && <Loader2 className={styles.loaderIcon} />}
@@ -160,6 +163,9 @@ const Profile = () => {
           <div className={styles.noPostsText}>У пользователя пока нет постов</div>
         )}
       </div>
+      {selectedPostId && (
+  <PostModal postId={selectedPostId} onClose={() => setSelectedPostId(null)} />
+)}
     </div>
   );
 };

@@ -7,6 +7,7 @@ import loginImage from "../assets/loginImg.jpg";
 import logoImage from "../assets/ichgram.jpg";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/authSlice";
+import Cookies from "js-cookie";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -35,8 +36,8 @@ const Login = () => {
     
       if (response.data.user) {
         dispatch(setUser({ user: response.data.user, token: response.data.token }));
-        // localStorage.setItem("user", JSON.stringify(response.data.user));
-        // localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+        Cookies.set("token", response.data.token, { expires: 7 });
         navigate("/");
       } else {
         setError("Ошибка при получении данных пользователя");

@@ -12,7 +12,15 @@ const CommentModal = ({
   newComment,
   addComment,
   deleteComment,
+  loading,
 }) => {
+  const handleAddComment = async () => {
+    // Добавление комментария
+    await addComment(); // Подождем, пока комментарий добавится
+    // Закрываем модальное окно после успешного добавления
+    setShowModal(false);
+  };
+
   return (
     <Modal
       isOpen={showModal}
@@ -51,7 +59,9 @@ const CommentModal = ({
             placeholder="Напишите комментарий..."
             rows={3}
           />
-          <button onClick={addComment}>Отправить</button>
+          <button onClick={handleAddComment} disabled={loading}>
+            {loading ? "Загрузка..." : "Отправить"}
+          </button>
         </div>
 
         <button onClick={() => setShowModal(false)} className={styles.closeButton}>

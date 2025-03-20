@@ -1,0 +1,47 @@
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 20px;
+  }
+  
+  .imageContainer {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .image {
+    max-width: 90%;
+    height: auto;
+    border-radius: 10px;
+  }
+  
+  .textContainer {
+    flex: 1;
+    padding: 20px;
+  }
+  
+  .textContainer h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+    color: red;
+  }
+  
+  .textContainer p {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    color: black;
+  }
+  
+  .textContainer a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .textContainer a:hover {
+    text-decoration: underline;
+  }
+  

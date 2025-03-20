@@ -1,0 +1,297 @@
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modalContent {
+    background-color: #fff;
+    display: flex;
+    max-width: 900px;
+    width: 100%;
+    height: 600px;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .closeButton {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 3px;
+    max-width: 30px;
+    min-height: 30px;
+    border-radius: 50%;
+  }
+  
+  .leftSection {
+    flex: 1;
+    background-color: #000;
+  }
+  
+  .postImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .rightSection {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .authorBlock {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+  
+  .username {
+    font-weight: bold;
+  }
+  
+  .menuWrapper {
+    margin-left: auto;
+    position: relative;
+  }
+  
+  .menuButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .dropdownMenu {
+    position: absolute;
+    top: 30px;
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+  }
+  
+  .dropdownMenu button {
+    padding: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    color: darkslateblue;
+    font-size: 14px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  
+  .dropdownMenu button:hover {
+    background-color: #f0f0f0;
+    color: #000;
+  }
+  
+  
+  .description {
+    margin-bottom: 8px;
+  }
+  
+  .date {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 12px;
+  }
+  
+  .commentsSection {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 12px;
+  }
+  
+  .comment {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .commentAvatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+  }
+  
+  .commentContent {
+    background-color: #f2f2f2;
+    padding: 8px 12px;
+    border-radius: 8px;
+    max-width: 100%;
+  }
+  
+  .commentUsername {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 4px;
+  }
+  
+  .deleteCommentButton {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: red;
+    cursor: pointer;
+  }
+  
+  .statsBlock {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+  
+  .statsBlock span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+  
+  .statsBlock span svg {
+    color: black;
+  }
+  
+  .commentForm {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .commentInput {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .submitButton {
+    padding: 8px 12px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .iconWrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+
+  /* --- Адаптив для планшетов и телефонов --- */
+@media (max-width: 768px) {
+    .modalContent {
+      flex-direction: column;
+      max-width: 95%;
+      height: auto;
+    }
+  
+    .leftSection {
+      width: 100%;
+      height: 300px;
+    }
+  
+    .postImage {
+      height: 100%;
+    }
+  
+    .rightSection {
+      padding: 15px;
+    }
+  
+    .avatar {
+      width: 36px;
+      height: 36px;
+    }
+  
+    .commentAvatar {
+      width: 28px;
+      height: 28px;
+    }
+  
+    .commentContent {
+      font-size: 14px;
+    }
+  
+    .statsBlock {
+      gap: 12px;
+    }
+  
+    .commentInput {
+      font-size: 14px;
+    }
+  
+    .submitButton {
+      padding: 6px 10px;
+      font-size: 14px;
+    }
+  }
+  
+  
+  @media (max-width: 480px) {
+    .modalContent {
+      max-width: 100%;
+      height: 100%;
+      border-radius: 0;
+    }
+  
+    .leftSection {
+      height: 250px;
+    }
+  
+    .closeButton {
+      top: 8px;
+      right: 8px;
+      max-width: 25px;
+      min-height: 25px;
+    }
+  
+    .dropdownMenu button {
+      padding: 8px;
+      font-size: 14px;
+    }
+  
+    .commentContent {
+      padding: 6px 10px;
+    }
+  
+    .commentUsername {
+      font-size: 14px;
+    }
+  
+    .description, .date {
+      font-size: 14px;
+    }
+  }   
+  
+  

@@ -1,10 +1,17 @@
 .container {
-    display: flex;
-  }
-  
-  .content {
-    flex: 1;
-    margin-left: 250px;
-    padding: 20px;
-  }
-  
+  display: flex;
+  flex-direction: column; /* Меняем направление! */
+  min-height: 100vh; /* Чтобы футер всегда внизу */
+}
+
+.content {
+  flex: 1;
+  display: flex;
+}
+
+.mainContent {
+  flex: 1;
+  margin-left: 250px;
+  padding: 20px;
+  padding-bottom: 60px; /* отступ под футер */
+}

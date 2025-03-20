@@ -6,10 +6,14 @@ import useLike from "../hooks/useLike";
 import useComments from "../hooks/useComments";
 import CommentModal from "./CommentModal";
 import styles from "../styles/Post.module.css";
+import PostModal from "./PostModal";
 
 const Post = ({ post }) => {
   const [showModal, setShowModal] = useState(false);
+  const [showPostModal, setShowPostModal] = useState(false);
   const { liked, likeCount, handleLike } = useLike(post);
+  const openPostModal = () => setShowPostModal(true);
+const closePostModal = () => setShowPostModal(false);
   const {
     comments,
     setNewComment,
@@ -30,8 +34,8 @@ const Post = ({ post }) => {
   const lastComment = comments.length > 0 ? comments[0] : null;
 
   const truncatedComment =
-    lastComment?.text && lastComment.text.length > 100
-      ? `${lastComment.text.substring(0, 100)}...`
+    lastComment?.text && lastComment.text.length > 30
+      ? `${lastComment.text.substring(0, 30)}...`
       : lastComment?.text || "";
 
   useEffect(() => {
@@ -66,7 +70,13 @@ const Post = ({ post }) => {
         />
       </div>
 
-      <img src={post.image} alt="Post" className={styles.postImage} />
+      <img
+  src={post.image}
+  alt="Post"
+  className={styles.postImage}
+  onClick={openPostModal}
+/>
+
 
       <div className={styles.actions}>
         <Heart
@@ -110,6 +120,10 @@ const Post = ({ post }) => {
         deleteComment={deleteComment}
         loading={loading}
       />
+
+{showPostModal && (
+  <PostModal postId={post._id} onClose={closePostModal}/>
+)}
     </div>
   );
 };
