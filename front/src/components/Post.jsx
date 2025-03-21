@@ -8,18 +8,39 @@ import CommentModal from "./CommentModal";
 import styles from "../styles/Post.module.css";
 import PostModal from "./PostModal";
 import { useSelector } from "react-redux";
+import api from "../utils/api";
 
 const Post = ({ post }) => {
   const currentUser = useSelector((state) => state.auth.user);
+  const token = useSelector((state) => state.auth.token);
   const [showModal, setShowModal] = useState(false);
   const [showPostModal, setShowPostModal] = useState(false);
   const [postData, setPostData] = useState(post);
-  const { liked, likeCount, handleLike } = useLike(postData);
+  const [fullUser, setFullUser] = useState(null);
+const postId = post._id
 
   const openPostModal = () => setShowPostModal(true);
   const closePostModal = () => setShowPostModal(false);
 
   const { comments, setNewComment, newComment, addComment, deleteComment, loading, error } = useComments(postData._id);
+
+  const { liked, likeCount, handleLike } = useLike(post, fullUser, postId, currentUser, token);
+
+  useEffect(() => {
+    const fetchFullUser = async () => {
+      try {
+        const response = await api.get(`/users/${currentUser.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setFullUser(response.data);
+      } catch (error) {
+        console.error("Ошибка загрузки пользователя:", error);
+      }
+    };
+    if (currentUser.id && token) fetchFullUser();
+  }, [currentUser.id, token]);
+
+  
 
   const isValidBase64 = (str) =>
     /^data:image\/(png|jpeg|jpg|gif|bmp|webp);base64,/.test(str);

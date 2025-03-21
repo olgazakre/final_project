@@ -1,40 +1,45 @@
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import api from "../utils/api";
 
-const useLike = (post) => {
-  const currentUser = useSelector((state) => state.auth.user);
-  const token = useSelector((state) => state.auth.token);
-
+const useLike = (post, fullUser, postId, currentUser, token) => {
   const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(post ? post.likes.length : 0);
+  const [likeCount, setLikeCount] = useState(0);
+
+
 
   useEffect(() => {
-    if (!post || !post.likes || !currentUser || !currentUser.likes) return;
+    const fetchPost = async () => {
+      try {
+        const response = await api.get(`/posts/${postId}`);
+        setLikeCount(response.data.likes.length);
+      } catch (error) {
+        console.error("Ошибка загрузки поста:", error);
+      }
+    };
+    if (postId) fetchPost();
+  }, [postId]);
 
-    const isLiked = currentUser.likes.some(userLikeId =>
-      post.likes.includes(userLikeId)
+  // Синхронизируем лайк после загрузки поста и полного юзера
+  useEffect(() => {
+    if (!post || !fullUser) return;
+    const isLiked = fullUser.likes.some((likePostId) =>
+      post.likes.includes(likePostId)
     );
     setLiked(isLiked);
-  }, [post, currentUser]);
+    setLikeCount(post.likes.length);
+  }, [post, fullUser]);
 
   const handleLike = async () => {
-    if (!currentUser || !token || !post || !post._id) {
-      console.error("Пост или пользователь не существует.");
-      return;
-    }
-
     try {
-      await api.post(`/liked/posts/${post._id}/like`, 
+      await api.post(
+        `/liked/posts/${postId}/like`,
         { userId: currentUser._id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      setLiked(!liked); 
+      setLiked((prev) => !prev);
       setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
-      
     } catch (error) {
-      console.error("Ошибка при лайке/дизлайке поста:", error);
+      console.error("Ошибка при лайке:", error);
     }
   };
 

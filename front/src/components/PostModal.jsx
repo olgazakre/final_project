@@ -16,36 +16,59 @@ const PostModal = ({
   deleteComment, 
   loading, 
   error  }) => {
-  const currentUser = useSelector((state) => state.auth.user);
-  const token = useSelector((state) => state.auth.token);
-
-  const [post, setPost] = useState(null);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const menuRef = useRef();
-
-  const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
-  const [newDescription, setNewDescription] = useState("");
-  const [newImage, setNewImage] = useState(null);
-  const [commentSubmitting, setCommentSubmitting] = useState(false);
-
-
-  useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        const response = await api.get(`/posts/${postId}`);
-        setPost(response.data);
-        setLikeCount(response.data.likes.length);
-        const isLiked = response.data.likes.includes(currentUser._id);
-        setLiked(isLiked);
-        setNewDescription(response.data.description);
-      } catch (error) {
-        console.error("Ошибка загрузки поста:", error);
-      }
-    };
-    fetchPost();
-  }, [postId, currentUser._id]);
+    const currentUser = useSelector((state) => state.auth.user);
+    const token = useSelector((state) => state.auth.token);
+  
+    const [post, setPost] = useState(null);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const menuRef = useRef();
+  
+    const [fullUser, setFullUser] = useState(null); 
+    const [liked, setLiked] = useState(false);
+    const [likeCount, setLikeCount] = useState(0);
+    const [newDescription, setNewDescription] = useState("");
+    const [newImage, setNewImage] = useState(null);
+    const [commentSubmitting, setCommentSubmitting] = useState(false);
+  
+    // Получаем полные данные пользователя
+    useEffect(() => {
+      const fetchFullUser = async () => {
+        try {
+          const response = await api.get(`/users/${currentUser.id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setFullUser(response.data);
+        } catch (error) {
+          console.error("Ошибка загрузки пользователя:", error);
+        }
+      };
+      if (currentUser.id && token) fetchFullUser();
+    }, [currentUser.id, token]);
+  
+    // Получаем пост
+    useEffect(() => {
+      const fetchPost = async () => {
+        try {
+          const response = await api.get(`/posts/${postId}`);
+          setPost(response.data);
+          setLikeCount(response.data.likes.length);
+          setNewDescription(response.data.description);
+        } catch (error) {
+          console.error("Ошибка загрузки поста:", error);
+        }
+      };
+      if (postId) fetchPost();
+    }, [postId]);
+  
+    // Проверяем лайк после загрузки поста и юзера
+    useEffect(() => {
+      if (!post || !fullUser) return;
+      const isLiked = fullUser.likes.some((likePostId) =>
+        post.likes.includes(likePostId)
+      );
+      setLiked(isLiked);
+    }, [post, fullUser]);  
 
   const handleLike = async () => {
     try {
