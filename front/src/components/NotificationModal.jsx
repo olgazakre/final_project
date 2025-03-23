@@ -113,7 +113,7 @@ const NotificationModal = ({ isOpen, onClose }) => {
                         className={styles.avatar}
                       />
                       <div className={styles.notificationInfo}>
-                        <p>
+                        <p className={styles.avatartamp}>
                           <strong>{notification.sender.username}</strong> {notification.action}
                         </p>
                         <p className={styles.typetamp}>

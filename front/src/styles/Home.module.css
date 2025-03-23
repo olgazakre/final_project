@@ -17,10 +17,6 @@
   margin-bottom: 30px; 
 }
 
-.postItem {
-  /* Стили для отдельного поста */
-}
-
 .loadMoreContainer {
   text-align: center;
   margin-top: 20px;
@@ -28,6 +24,7 @@
 
 .loadMore {
   padding: 10px 20px;
+  max-width: 600px;
   font-size: 16px;
   cursor: pointer;
   background-color: #007bff;

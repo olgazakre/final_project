@@ -15,7 +15,7 @@
     background-color: #fff;
     border-radius: 12px;
     padding: 20px;
-    width: 400px;
+    max-width: 500px;
     max-height: 80vh;
     overflow-y: auto;
     position: relative;
@@ -28,14 +28,13 @@
     right: 12px;
     background: transparentg;
     border: none;
-    font-size: 24px;
+    font-size: 22px;
     cursor: pointer;
     max-width: 30px;
     max-height: 30px;
     border-radius: 50%;
-    align-items: center;
-    justify-content: center;
-    padding: 3px;
+    padding: 5px;
+    color: black;
   }
   
   .notificationList {
@@ -66,12 +65,15 @@
   }
   
   .notificationInfo {
-    flex: 1;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr 2fr 1fr;
   }
-  
-  .notificationInfo p {
-    margin: 0;
-    font-size: 14px;
+
+  .avatartamp{
+    font-family: auto;
+    font-size: 22px;
+    color: dimgray;
   }
   
   .timestamp {
@@ -81,7 +83,7 @@
   }
 
   .typetamp{
-    font-size: 12px;
+    font-size: 16px;
     color: black;
   }
   
