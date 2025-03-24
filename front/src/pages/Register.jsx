@@ -23,6 +23,10 @@ const Register = () => {
     setUsernameError("");
 
     try {
+      if (password.length < 4) {
+        setError("Пароль должен содержать минимум 4 символа");
+        return;
+      }  
       await api.post("/auth/register", { username, email, password, fullName });
       navigate("/auth/login");
     } catch (err) {
