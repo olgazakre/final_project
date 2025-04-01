@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import api from '../utils/api'; 
 import styles from '../styles/Explore.module.css'; 
 import PostModal from '../components/PostModal';
-
+import useComments from '../hooks/useComments';
 
 const Explore = () => {
   const [randomPosts, setRandomPosts] = useState([]); 
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null); 
   const [selectedPostId, setSelectedPostId] = useState(null);
+  const [postData, setPostData] = useState(null);
 
   const loadPosts = async () => {
     setLoading(true); 
@@ -16,15 +17,10 @@ const Explore = () => {
       const response = await api.get('/posts');
       const allPosts = response.data; 
 
-      const shuffledPosts = [...allPosts];
-      for (let i = shuffledPosts.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffledPosts[i], shuffledPosts[j]] = [shuffledPosts[j], shuffledPosts[i]]; 
-      }
-
+      const shuffledPosts = [...allPosts].sort(() => Math.random() - 0.5);
       setRandomPosts(shuffledPosts.slice(0, 9));
     } catch (err) {
-        console.error(err)
+      console.error(err);
       setError('Ошибка загрузки постов'); 
     } finally {
       setLoading(false); 
@@ -35,21 +31,26 @@ const Explore = () => {
     loadPosts(); 
   }, []);
 
-  const openPostModal = (postId) => {
+  const openPostModal = async (postId) => {
     setSelectedPostId(postId);
+    try {
+      const response = await api.get(`/posts/${postId}`);
+      setPostData(response.data);
+    } catch (err) {
+      console.error('Ошибка загрузки поста', err);
+    }
   };
-  
+
   const closePostModal = () => {
     setSelectedPostId(null);
-  }; 
-  
-  if (loading) {
-    return <div>Загрузка...</div>; 
-  }
+    setPostData(null);
+  };
 
-  if (error) {
-    return <div>{error}</div>; 
-  }
+  // Используем хук комментариев
+  const { comments, newComment, setNewComment, addComment, deleteComment } = useComments(selectedPostId);
+
+  if (loading) return <div>Загрузка...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className={styles.container}>
@@ -57,12 +58,11 @@ const Explore = () => {
         {randomPosts.map((post) => (
           <div key={post._id} className={styles.card}>
             <img
-  src={post.image}
-  alt={post.title}
-  className={styles.image}
-  onClick={() => openPostModal(post._id)}
-/>
-
+              src={post.image}
+              alt={post.title}
+              className={styles.image}
+              onClick={() => openPostModal(post._id)}
+            />
             <div className={styles.cardContent}>
               <h3>{post.title}</h3>
               <p>{post.description}</p>
@@ -71,12 +71,22 @@ const Explore = () => {
         ))}
       </div>
 
-      {selectedPostId && (
-  <PostModal postId={selectedPostId} onClose={closePostModal} />
-)}
-
+      {selectedPostId && postData && (
+        <PostModal
+          postId={postData._id}
+          onClose={closePostModal}
+          setPostData={setPostData}
+          comments={comments}
+          newComment={newComment}
+          setNewComment={setNewComment}
+          addComment={addComment}
+          deleteComment={deleteComment}
+          
+        />
+      )}
     </div>
   );
 };
 
 export default Explore;
+
