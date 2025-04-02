@@ -18,15 +18,15 @@ const Profile = () => {
   const currentUser = useSelector((state) => state.auth.user);
 
   const [user, setUser] = useState(null);
-  const [posts, setPosts] = useState([]);
-  const [page, setPage] = useState(1);
-  const [hasMorePosts, setHasMorePosts] = useState(true);
+  const [posts, setPosts] = useState([]);  // Все посты пользователя
+  const [displayedPosts, setDisplayedPosts] = useState([]); // Посты для отображения
+  const [page, setPage] = useState(1);  // Для пагинации
+  const [hasMorePosts, setHasMorePosts] = useState(false); // Проверка наличия дополнительных постов
   const [loadingUser, setLoadingUser] = useState(false);
   const [loadingPosts, setLoadingPosts] = useState(false);
   const [postData, setPostData] = useState(null);
   const [selectedPostId, setSelectedPostId] = useState(null);
 
-  // Загружаем данные пользователя
   useEffect(() => {
     const fetchUser = async () => {
       setLoadingUser(true);
@@ -43,30 +43,26 @@ const Profile = () => {
     fetchUser();
   }, [userId]);
 
-  // Сброс постов при изменении профиля
   useEffect(() => {
-    setPosts([]);
-    setPage(1);
-    setHasMorePosts(true);
+    setPosts([]);  // Сбрасываем все посты при изменении userId
+    setDisplayedPosts([]); // Сбрасываем отображаемые посты
+    setPage(1);    // Начинаем с первой страницы
+    setHasMorePosts(false);  // Нет дополнительных постов по умолчанию
   }, [userId]);
 
-  // Загружаем посты пользователя
   useEffect(() => {
     const fetchPosts = async () => {
       setLoadingPosts(true);
       try {
-        const response = await api.get(`/posts/user/${userId}?page=${page}&limit=${POSTS_PER_PAGE}`);
-        const newPosts = response.data;
+        const response = await api.get(`/posts/user/${userId}`);
+        const fetchedPosts = response.data;
+        setPosts(fetchedPosts);  // Сохраняем все посты
 
-        if (newPosts.length < POSTS_PER_PAGE) {
-          setHasMorePosts(false);
-        }
+        // Определяем, есть ли дополнительные посты
+        setHasMorePosts(fetchedPosts.length > POSTS_PER_PAGE);
 
-        setPosts((prevPosts) => {
-          const existingIds = new Set(prevPosts.map((post) => post._id));
-          const filteredNewPosts = newPosts.filter((post) => !existingIds.has(post._id));
-          return [...prevPosts, ...filteredNewPosts];
-        });
+        // Отображаем только первые 6 постов
+        setDisplayedPosts(fetchedPosts.slice(0, POSTS_PER_PAGE));
       } catch (error) {
         console.error("Ошибка загрузки постов:", error);
       } finally {
@@ -77,9 +73,8 @@ const Profile = () => {
     if (userId) {
       fetchPosts();
     }
-  }, [userId, page]);
+  }, [userId]);
 
-  // Открытие модального окна с постом
   const openPostModal = async (postId) => {
     try {
       const response = await api.get(`/posts/${postId}`);
@@ -90,7 +85,6 @@ const Profile = () => {
     }
   };
 
-  // Закрытие модального окна
   const closePostModal = () => {
     setPostData(null);
     setSelectedPostId(null);
@@ -107,9 +101,18 @@ const Profile = () => {
   }
 
   const handleLoadMore = () => {
-    setPage((prev) => prev + 1);
+    const nextPage = page + 1;
+    setPage(nextPage);
+
+    // Добавляем следующие 6 постов
+    const nextPosts = posts.slice(nextPage * POSTS_PER_PAGE - POSTS_PER_PAGE, nextPage * POSTS_PER_PAGE);
+    setDisplayedPosts((prevPosts) => [...prevPosts, ...nextPosts]);
+
+    // Если постов больше нет, скрываем кнопку
+    if (nextPage * POSTS_PER_PAGE >= posts.length) {
+      setHasMorePosts(false);
+    }
   };
-  
 
   return (
     <div className={styles.container}>
@@ -155,7 +158,7 @@ const Profile = () => {
       </div>
 
       <div className={styles.postsGrid}>
-        {posts.map((post) => (
+        {displayedPosts.map((post) => (
           <img key={post._id} src={post.image} alt="Post" className={styles.postImage} onClick={() => openPostModal(post._id)} />
         ))}
       </div>
@@ -167,13 +170,13 @@ const Profile = () => {
             Показать ещё
           </button>
         )}
-        {!hasMorePosts && posts.length > 0 && (
+        {!hasMorePosts && displayedPosts.length > 0 && (
           <div className={styles.noMorePosts}>
             <ImageOff size={32} />
             <p>Это все посты</p>
           </div>
         )}
-        {!loadingPosts && posts.length === 0 && <div className={styles.noPostsText}>У пользователя пока нет постов</div>}
+        {!loadingPosts && displayedPosts.length === 0 && <div className={styles.noPostsText}>У пользователя пока нет постов</div>}
       </div>
 
       {selectedPostId && postData && (
