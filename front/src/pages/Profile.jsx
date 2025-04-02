@@ -6,14 +6,15 @@ import FollowButton from "../components/FollowButton";
 import { Loader2, ImageOff } from "lucide-react";
 import styles from "../styles/Profile.module.css";
 import PostModal from "../components/PostModal";
-import { logout } from "../redux/authSlice"; 
+import { logout } from "../redux/authSlice";
+import useComments from "../hooks/useComments";
 
 const POSTS_PER_PAGE = 6;
 
 const Profile = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch(); 
+  const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.auth.user);
 
   const [user, setUser] = useState(null);
@@ -22,12 +23,14 @@ const Profile = () => {
   const [hasMorePosts, setHasMorePosts] = useState(true);
   const [loadingUser, setLoadingUser] = useState(false);
   const [loadingPosts, setLoadingPosts] = useState(false);
+  const [postData, setPostData] = useState(null);
   const [selectedPostId, setSelectedPostId] = useState(null);
 
+  // Загружаем данные пользователя
   useEffect(() => {
     const fetchUser = async () => {
+      setLoadingUser(true);
       try {
-        setLoadingUser(true);
         const response = await api.get(`/users/${userId}`);
         setUser(response.data);
       } catch (error) {
@@ -36,19 +39,22 @@ const Profile = () => {
         setLoadingUser(false);
       }
     };
+
     fetchUser();
   }, [userId]);
 
+  // Сброс постов при изменении профиля
   useEffect(() => {
     setPosts([]);
     setPage(1);
     setHasMorePosts(true);
   }, [userId]);
 
+  // Загружаем посты пользователя
   useEffect(() => {
     const fetchPosts = async () => {
+      setLoadingPosts(true);
       try {
-        setLoadingPosts(true);
         const response = await api.get(`/posts/user/${userId}?page=${page}&limit=${POSTS_PER_PAGE}`);
         const newPosts = response.data;
 
@@ -73,14 +79,24 @@ const Profile = () => {
     }
   }, [userId, page]);
 
-  const handleLoadMore = () => {
-    setPage((prev) => prev + 1);
+  // Открытие модального окна с постом
+  const openPostModal = async (postId) => {
+    try {
+      const response = await api.get(`/posts/${postId}`);
+      setPostData(response.data);
+      setSelectedPostId(postId);
+    } catch (error) {
+      console.error("Ошибка загрузки поста:", error);
+    }
   };
 
-  const handleLogout = () => {
-    dispatch(logout()); 
-    navigate("/auth/login"); 
+  // Закрытие модального окна
+  const closePostModal = () => {
+    setPostData(null);
+    setSelectedPostId(null);
   };
+
+  const { comments, newComment, setNewComment, addComment, deleteComment } = useComments(selectedPostId);
 
   if (loadingUser || !user) {
     return (
@@ -90,50 +106,49 @@ const Profile = () => {
     );
   }
 
+  const handleLoadMore = () => {
+    setPage((prev) => prev + 1);
+  };
+  
+
   return (
     <div className={styles.container}>
       <div className={styles.topBlock}>
-        <img
-          src={user.avatar}
-          alt="Avatar"
-          className={styles.avatar}
-        />
+        <img src={user.avatar} alt="Avatar" className={styles.avatar} />
         <div className={styles.userInfo}>
           <div className={styles.usernameBlock}>
             <h2 className={styles.username}>{user.username}</h2>
             {currentUser && currentUser.id === user._id ? (
               <>
-                <button
-                  onClick={() => navigate(`/edit-profile`)}
-                  className={styles.editProfileButton}
-                >
+                <button onClick={() => navigate(`/edit-profile`)} className={styles.editProfileButton}>
                   Редактировать профиль
                 </button>
-                <button
-                  onClick={handleLogout}
-                  className={styles.logoutButton}
-                >
+                <button onClick={() => dispatch(logout()) && navigate("/auth/login")} className={styles.logoutButton}>
                   Выйти
                 </button>
               </>
             ) : (
               <>
-                {currentUser && currentUser.id !== user._id && (
-                  <FollowButton targetUserId={user._id} />
-                )}
-                <button
-                  onClick={() => navigate(`/messages/${user._id}`)}
-                  className={styles.messageButton}
-                >
+                {currentUser && currentUser.id !== user._id && <FollowButton targetUserId={user._id} />}
+                <button onClick={() => navigate(`/messages/${user._id}`)} className={styles.messageButton}>
                   Сообщение
                 </button>
               </>
             )}
           </div>
           <div className={styles.statsBlock}>
-            <span><strong>постов - </strong>{user.posts.length}</span>
-            <span><strong>подписчиков - </strong>{user.followers.length}</span>
-            <span><strong>подписок - </strong>{user.following.length}</span>
+            <span>
+              <strong>постов - </strong>
+              {user.posts.length}
+            </span>
+            <span>
+              <strong>подписчиков - </strong>
+              {user.followers.length}
+            </span>
+            <span>
+              <strong>подписок - </strong>
+              {user.following.length}
+            </span>
           </div>
           <p className={styles.bio}>{user.bio}</p>
         </div>
@@ -141,23 +156,14 @@ const Profile = () => {
 
       <div className={styles.postsGrid}>
         {posts.map((post) => (
-          <img
-            key={post._id}
-            src={post.image}
-            alt="Post"
-            className={styles.postImage}
-            onClick={() => setSelectedPostId(post._id)} 
-          />
+          <img key={post._id} src={post.image} alt="Post" className={styles.postImage} onClick={() => openPostModal(post._id)} />
         ))}
       </div>
 
       <div className={styles.loadMoreBlock}>
         {loadingPosts && <Loader2 className={styles.loaderIcon} />}
         {!loadingPosts && hasMorePosts && (
-          <button
-            onClick={handleLoadMore}
-            className={styles.loadMoreButton}
-          >
+          <button onClick={handleLoadMore} className={styles.loadMoreButton}>
             Показать ещё
           </button>
         )}
@@ -167,13 +173,21 @@ const Profile = () => {
             <p>Это все посты</p>
           </div>
         )}
-        {!loadingPosts && posts.length === 0 && (
-          <div className={styles.noPostsText}>У пользователя пока нет постов</div>
-        )}
+        {!loadingPosts && posts.length === 0 && <div className={styles.noPostsText}>У пользователя пока нет постов</div>}
       </div>
 
-      {selectedPostId && (
-        <PostModal postId={selectedPostId} onClose={() => setSelectedPostId(null)} />
+      {selectedPostId && postData && (
+        <PostModal
+          postId={postData._id}
+          onClose={closePostModal}
+          postData={postData}
+          setPostData={setPostData}
+          comments={comments}
+          newComment={newComment}
+          setNewComment={setNewComment}
+          addComment={addComment}
+          deleteComment={deleteComment}
+        />
       )}
     </div>
   );

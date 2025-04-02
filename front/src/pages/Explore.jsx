@@ -46,7 +46,6 @@ const Explore = () => {
     setPostData(null);
   };
 
-  // Используем хук комментариев
   const { comments, newComment, setNewComment, addComment, deleteComment } = useComments(selectedPostId);
 
   if (loading) return <div>Загрузка...</div>;
@@ -81,7 +80,7 @@ const Explore = () => {
           setNewComment={setNewComment}
           addComment={addComment}
           deleteComment={deleteComment}
-          
+
         />
       )}
     </div>

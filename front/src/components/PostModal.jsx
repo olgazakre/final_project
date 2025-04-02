@@ -31,7 +31,6 @@ const PostModal = ({
     const [newImage, setNewImage] = useState(null);
     const [commentSubmitting, setCommentSubmitting] = useState(false);
   
-    // Получаем полные данные пользователя
     useEffect(() => {
       const fetchFullUser = async () => {
         try {
@@ -46,7 +45,6 @@ const PostModal = ({
       if (currentUser.id && token) fetchFullUser();
     }, [currentUser.id, token]);
   
-    // Получаем пост
     useEffect(() => {
       const fetchPost = async () => {
         try {
@@ -61,7 +59,6 @@ const PostModal = ({
       if (postId) fetchPost();
     }, [postId]);
   
-    // Проверяем лайк после загрузки поста и юзера
     useEffect(() => {
       if (!post || !fullUser) return;
       const isLiked = fullUser.likes.some((likePostId) =>
